@@ -8,13 +8,17 @@ GRAVITY = 9.81
 
 rows = ["","","","","","","","","",""]*10
 columns = ["","","","","","","","","",""]*10
-
+grid = [rows,rows,rows,rows,rows,rows,rows,rows,rows,rows]
 
 time_between_frame = 1/60
 position = [1,1]
 
+
+
+
 #total frames
 iterations = 100
+
 #current frame
 x = 0
 
@@ -58,7 +62,7 @@ def set_speed(fps):
     
 
 time_between_frame = set_speed(20)
-while (keyboard.is_pressed('q') == False):
+while (True):
     
     make_frame(position)
     increase_position()
