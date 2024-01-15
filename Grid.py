@@ -5,6 +5,8 @@ class Grid:
         self.x = x
         self.y = y
         self.grid = []
+        self.last_position = [0,0]
+
 
     #create blank matrix x*y
     def make_grid(self):
@@ -15,19 +17,26 @@ class Grid:
         self.grid = grid
     
 
-    def print_grid(self, x , y):
+    def print_grid(self):
         for i in range(self.x):
             for j in range(self.y):
-                print(" ", end='')
+                print("", end='')
                 print(self.grid[i][j], end="")
             print()
 
+    def update_position(self, x, y):
+        if self.last_position:
+            self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
+      
+        self.grid[x][y] = "#"
 
-   # def update_
 
-blank = Grid(100,100)
-blank.make_grid()
-blank.print_grid(blank.x, blank.y)
+
+
+
+# blank = Grid(100,100)
+# blank.make_grid()
+# blank.print_grid(blank.x, blank.y)
 
 
 

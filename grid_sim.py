@@ -1,14 +1,15 @@
 import time
 import pynput
+from Grid import Grid
+
 
 #Constants
 GRAVITY = 9.81
 
 
 
-rows = ["","","","","","","","","",""]*10
-columns = ["","","","","","","","","",""]*10
-grid = [rows,rows,rows,rows,rows,rows,rows,rows,rows,rows]
+
+
 
 time_between_frame = 1/60
 position = [1,1]
@@ -17,42 +18,22 @@ position = [1,1]
 
 
 #total frames
-iterations = 100
+iterations = 49
 
 #current frame
-x = 0
-
-
-
-#print grid w/# in position
-def make_frame(position):
-    j=0
-    k=0
-    #Rows
-    for y in rows:
-        print("row: ", j)
-        j+=1    
-        #Columns
-        for x in columns:
-            if (j == position[0] and k == position[1]):
-            
-                print('#', end='')
-            else:
-                print(".", end='')
-            k+=1
-        k=0
-    
-    
+x = 1
+ 
+#add 1 to coordinates 
 def increase_position():
     position[0]+=1
     position[1]+=1
-
+    return position
 
 #set the x and y
 def set_position(x, y):
     position[0] = x
     position[1] = y
-
+    
 
 #set frames/second
 def set_speed(fps):
@@ -60,12 +41,17 @@ def set_speed(fps):
 
     return ms_per_frame
     
-
-time_between_frame = set_speed(20)
-while (True):
+#Run it
+grid = Grid(50, 50) 
+grid.make_grid()
+time_between_frame = set_speed(80)
+while (x< iterations):
     
-    make_frame(position)
+   
+    
     increase_position()
-    x+=1
-    time.sleep(time_between_frame)
     
+    grid.update_position(position[0], position[1])
+    grid.print_grid()
+    time.sleep(time_between_frame)
+    x += 1
