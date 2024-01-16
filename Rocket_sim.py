@@ -18,7 +18,7 @@ position = [1,1]
 
 
 #total frames
-iterations = 49
+iterations = 100
 
 #current frame
 x = 1
@@ -42,15 +42,15 @@ def set_speed(fps):
     return ms_per_frame
     
 #Run it
-grid = Grid(50, 50) 
+grid = Grid(100, 100) 
 grid.make_grid()
-time_between_frame = set_speed(80)
+time_between_frame = set_speed(10)
 while (x< iterations):
     
    
     
     increase_position()
-    
+    time_between_frame /=1.03
     grid.update_position(position[0], position[1])
     grid.print_grid()
     time.sleep(time_between_frame)
