@@ -4,25 +4,36 @@ class Rocket:
         self.width = width
         self.weight = weight
         self.thrust = 0
+        self.angle = 0
 
 
     #Setters
     def set_length(self, length):
         self.length = length
+
     def set_width(self, width):
         self.width = width
+
     def set_weight(self, weight):
         self.weight = weight
+
     def set_thrust(self, thrust):
         self.thrust = thrust
+
+    def set_angle(self, angle):
+        self.angle = angle
+
 
     #Getter
     def get_length(self):
         return self.length
+    
     def get_width(self):
         return self.width
+    
     def get_weight(self):
         return self.weight
+    
     def get_thrust(self):
         return self.thrust
     
