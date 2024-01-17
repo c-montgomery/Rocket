@@ -1,11 +1,16 @@
+#Constant
+GRAVITY = 9.81
+
+
 class Rocket:
-    def __init__(self, length, width, weight, thrust):
+    def __init__(self, length, width, weight, angle = 0):
         self.length = length
         self.width = width
         self.weight = weight
         self.thrust = 0
         self.angle = 0
-
+        self.is_engine_on = False
+        self.has_visible_thrust = False
 
     #Setters
     def set_length(self, length):
@@ -22,6 +27,8 @@ class Rocket:
 
     def set_angle(self, angle):
         self.angle = angle
+
+    
 
 
     #Getter
@@ -43,3 +50,18 @@ class Rocket:
     #draw exhaust
     def draw_exhaust(self):
         pass
+
+    #Bools
+    def toggle_animate_thrust():
+        pass
+    
+    def toggle_engine(self):
+        if self.is_engine_on == True:
+            self.is_engine_on = False
+            self.has_visible_thrust = False
+        else:
+            self.is_engine_on = True
+            self.has_visible_thrust = True
+            toggle_animate_thrust(self)
+
+    
