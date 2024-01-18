@@ -46,7 +46,7 @@ if __name__ == '__main__':
     #Run it
     grid = Grid(100, 100) 
     grid.make_grid()
-    time_between_frame = set_speed(1)
+    time_between_frame = set_speed(60)
 
     def on_press(key):
         try:
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
         
         increase_position()
-        time_between_frame /=1.03
+        time_between_frame /=.95
         grid.update_position(position[0], position[1])
         grid.print_grid()
         time.sleep(time_between_frame)
