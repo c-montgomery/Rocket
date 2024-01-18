@@ -2,6 +2,7 @@ import time
 import pynput
 from Grid import Grid
 import sys
+from pynput import keyboard
 
 
 
@@ -46,9 +47,33 @@ if __name__ == '__main__':
     grid = Grid(100, 100) 
     grid.make_grid()
     time_between_frame = set_speed(1)
+
+    def on_press(key):
+        try:
+            print('alphanumeric key {0} pressed'.format(
+                key.char))
+        except AttributeError:
+            print('special key {0} pressed'.format(
+                key))
+
+    def on_release(key):
+        print('{0} released'.format(
+            key))
+        if key == keyboard.Key.esc:
+            # Stop listener
+            return False
+
+
+    # start listener
+    listener = keyboard.Listener(
+        on_press=on_press,
+        on_release=on_release)
+    listener.start()
+
+
     while (x< iterations):
-        
     
+
         
         increase_position()
         time_between_frame /=1.03
@@ -58,4 +83,4 @@ if __name__ == '__main__':
         x += 1
         #print(grid.x , iterations)
         # grid.x wont find current position; if (grid.x == 1):
-sys.exit()
+

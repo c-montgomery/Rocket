@@ -1,3 +1,4 @@
+
 #Constant
 GRAVITY = 9.81
 
@@ -52,9 +53,9 @@ class Rocket:
         pass
 
     #Bools
-    def toggle_animate_thrust():
+    def toggle_animate_thrust(self):
         pass
-    
+
     def toggle_engine(self):
         if self.is_engine_on == True:
             self.is_engine_on = False
@@ -62,6 +63,6 @@ class Rocket:
         else:
             self.is_engine_on = True
             self.has_visible_thrust = True
-            toggle_animate_thrust(self)
+            #toggle_animate_thrust(self)
 
     
