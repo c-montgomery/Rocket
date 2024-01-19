@@ -2,8 +2,8 @@
 
 class Grid:
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        self.x = x #x-dimension
+        self.y = y #y-dimension
         self.grid = []
         self.last_position = [0,0]
 
@@ -16,7 +16,7 @@ class Grid:
             grid.append(row)
         self.grid = grid
     
-
+    #print grid to terminal
     def print_grid(self):
         for i in range(self.y):
             for j in range(self.x):
@@ -24,6 +24,7 @@ class Grid:
                 print(self.grid[i][j], end="")
             print()
 
+    #erase last position, draw new
     def update_position(self, x, y):
         if self.last_position:
             self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."

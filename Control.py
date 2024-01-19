@@ -1,6 +1,7 @@
 import asyncio
 from pynput import keyboard
 
+#allow input to manipulate sim
 class Control:
     def __init__(self):
         self.listener = keyboard.Listener(
@@ -25,12 +26,16 @@ class Control:
         asyncio.get_event_loop().run_forever()
 
     async def listen(self):
-        with self.listener as listener:
-            await asyncio.Future()
+        
+        listener = keyboard.Listener(
+            on_press=on_press,
+            on_release=on_release)
+        listener.start()
+        await asyncio.Future()
 
     def stop_listener(self):
         self.listener.stop()
 
-if __name__ == "__main__":
-    control_instance = Control()
-    control_instance.start_listener()
+
+control = Control()
+control.start_listener()
