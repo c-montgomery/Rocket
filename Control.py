@@ -27,10 +27,8 @@ class Control:
 
     async def listen(self):
         
-        listener = keyboard.Listener(
-            on_press=on_press,
-            on_release=on_release)
-        listener.start()
+        
+        self.listener.start()
         await asyncio.Future()
 
     def stop_listener(self):
