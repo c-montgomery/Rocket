@@ -1,0 +1,30 @@
+SIM
+
+    Main:
+	
+	create main class
+	convert grid to SW origin
+	
+	
+	
+	Async test/experiment
+	
+	
+	
+	
+	
+	Classupdates:
+	
+	
+		Rocket
+		
+		Control
+			w/s = thrust
+			a/d = rudder angle
+			
+			animate angle
+			
+			animate thrust
+		
+		Environ
+	
