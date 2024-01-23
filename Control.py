@@ -27,13 +27,9 @@ class Control:
 
     async def listen(self):
         
-        
         self.listener.start()
         await asyncio.Future()
 
     def stop_listener(self):
         self.listener.stop()
 
-
-control = Control()
-control.start_listener()

@@ -15,3 +15,4 @@ class Display_panel:
     
     def set_position(self, pos):
         self.position = pos
+    

@@ -1,44 +1,54 @@
-
+import time
 
 class Grid:
     def __init__(self, x, y):
         self.x = x #x-dimension
         self.y = y #y-dimension
         self.grid = []
-        self.last_position = [0,0]
+        self.last_position = [1,1]
+        self.x_constraint = x
+        self.y_constraint = y
 
 
     #create blank matrix x*y
     def make_grid(self):
         grid = []
-        for i in range(self.y):
-            row = ["."]*self.x
+        
+        for i in range(self.x):
+            row = ["."]*self.y
             grid.append(row)
         self.grid = grid
     
     #print grid to terminal
     def print_grid(self):
         for i in range(self.y):
+            #print (i, end="")
             for j in range(self.x):
-                print("", end='')
-                print(self.grid[i][j], end="")
+                print(self.grid[j][i], end="")
+               #print(j, end="")
             print()
 
     #erase last position, draw new
     def update_position(self, x, y):
-        if self.last_position:
-            self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
-        self.last_position = [x,y]
-        if (x < self.x and y < self.y):
-            self.grid[x][y] = "#"
+        y = self.y - y
+       #print(self.last_position[0],[self.last_position[1]])
+        self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
+        self.last_position = [x, y-1]
+        print("x", x, "y", self.y - y)
+        #print( self.grid[x][y])
+        self.grid[x][y-1] = "#" #rocket center
+
+#while True:
+
+grid = Grid(10,10)
+grid.make_grid()
+for z in range(10):
+    grid.update_position(z,z)
+    grid.print_grid()
+    time.sleep(.2)
 
 
 
-
-
-# blank = Grid(100,100)
-# blank.make_grid()
-# blank.print_grid(blank.x, blank.y)
 
 
 
