@@ -1,7 +1,6 @@
 import time
 from Grid import Grid
 import sys
-from Control import Control
 from Rocket import Rocket
 import threading
 
@@ -21,7 +20,7 @@ class Main:
         self.frame_rate = 60
       
         self.time_between_frame = 1/60
-        self.current_position = ["",""]
+        self.current_position = [0,0]
 
         #total frames
         self.iterations = 100
@@ -36,14 +35,14 @@ class Main:
     
     #set the x and y
     def set_position(self, x, y):
-        self.current_position[0] = self.y-y
-        self.current_position[1] = self.x-x
+        self.current_position[0] = x
+        self.current_position[1] = y
 
 
     #add 1 to coordinates 
     def increase_position(self):
         self.set_position(self.x+1,self.y+1)
-        #position[1]-=1
+        
         return self.current_position
 
 
@@ -63,21 +62,20 @@ class Main:
     
         grid = Grid(self.x, self.y) 
         grid.make_grid()
-        time_between_frame = self.set_framerate(30)
-        print("position abouty to update")
-        grid.update_position(50,0)
+        time_between_frame = self.set_framerate(10)
+        grid.update_position(5,5)
         x = 0
         rocket = self.create_rocket()
-        #start instance of Control for controlling vehicle
-        #control = Control()
-        #control.start_listener()
-        print("about to while")
         while (x< self.iterations):
 
-            
-            self.increase_position()
+            print("current position 1 and 2")
+            print(self.current_position[0], self.current_position[1])
+            self.current_position[0] +=1
+            self.current_position[1] +=1
             grid.update_position(self.current_position[0], self.current_position[1])
-            self.increase_position()
+            
+            print("current position 1 and 2")
+            print(self.current_position[0], self.current_position[1])
             grid.print_grid()
             print(round(time.time() * 1000))
             time.sleep(time_between_frame)

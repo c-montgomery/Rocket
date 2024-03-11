@@ -6,9 +6,6 @@ class Grid:
         self.y = y #y-dimension
         self.grid = []
         self.last_position = [1,1]
-        self.x_constraint = x
-        self.y_constraint = y
-
 
     #create blank matrix x*y
     def make_grid(self):
@@ -29,15 +26,28 @@ class Grid:
             print()
 
     #erase last position, draw new
+    #Converts NE Origin to SE
     def update_position(self, x, y):
         
-        
-       #print(self.last_position[0],[self.last_position[1]])
+        print("lastPosition")
+        print(int(self.last_position[0]),int(self.last_position[1]))
+        print("Length")
+        print(len(self.grid))
         self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
-        self.last_position = [x, y]
-        print("x", x, "y",  y)
+        self.last_position = [(x), (y)]
+        # print("x", x, "y",  y)
+        # print("self.y ", self.y)
+        # print("self.y - y " , end="")
+        # print((self.y)-int(y))
+        # print("self.x ", self.x)
+        # print("self.x - x " , self.x-x)
+        # print("len [0] ", len(self.grid[0]))
+        # print("len [1] ", len(self.grid))
         #print( self.grid[x][y])
-        self.grid[x][y] = "#" #rocket center
+        try:
+            self.grid[x][y] = "#" #rocket center
+        except IndexError:
+            print("out of range")
 
 
 
