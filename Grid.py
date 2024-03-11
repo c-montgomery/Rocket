@@ -1,4 +1,4 @@
-import time
+
 
 class Grid:
     def __init__(self, x, y):
@@ -18,7 +18,7 @@ class Grid:
             row = ["."]*self.y
             grid.append(row)
         self.grid = grid
-    
+     
     #print grid to terminal
     def print_grid(self):
         for i in range(self.y):
@@ -30,22 +30,16 @@ class Grid:
 
     #erase last position, draw new
     def update_position(self, x, y):
-        y = self.y - y
+        
+        
        #print(self.last_position[0],[self.last_position[1]])
         self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
-        self.last_position = [x, y-1]
-        print("x", x, "y", self.y - y)
+        self.last_position = [x, y]
+        print("x", x, "y",  y)
         #print( self.grid[x][y])
-        self.grid[x][y-1] = "#" #rocket center
+        self.grid[x][y] = "#" #rocket center
 
-#while True:
 
-grid = Grid(10,10)
-grid.make_grid()
-for z in range(10):
-    grid.update_position(z,z)
-    grid.print_grid()
-    time.sleep(.2)
 
 
 
