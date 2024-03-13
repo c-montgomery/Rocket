@@ -36,6 +36,7 @@ class Grid:
             self.grid[x][y] = "#" #rocket center
         except IndexError:
             print("out of range")
+            
 
 
 

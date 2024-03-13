@@ -21,8 +21,6 @@ class Main:
         self.time_between_frame = 1/60
 
         self.current_position = [0,0]
-        
-        
 
         #total frames
         self.iterations = 100
@@ -30,14 +28,13 @@ class Main:
         self.stats = {"velocity": 0,
                       "key pressed: ": "",
                       "thrust: ": 0,
-                      "thrust angle: ": 90}
+                      "thrust angle: ": 90,
+                      "debug": ""}
 
     #routine to create rocket
     def create_rocket(self, length=3, width=1, weight=1000, angle=90):
         rocket = Rocket(length, width, weight, angle )
         return rocket
-
-
 
     
     #set the x and y
@@ -49,7 +46,6 @@ class Main:
     #add 1 to coordinates 
     def increase_position(self):
         self.set_position(self.x+1,self.y+1)
-        
         return self.current_position
 
 
@@ -57,34 +53,29 @@ class Main:
     def set_framerate(self, fps):
         self.fps = fps
         ms_per_frame = 1/fps
-
         return ms_per_frame
     
     # Function to handle keyboard input 
     def on_press(self, key):
-        self.stats["key pressed: "] = str(key)
-        
-        if (key == 'w'):
-            self.stats["thrust: "] +=10
-            pass
-        elif(key == 'a'):
-            self.stats["thrust: "] -=10
-            pass
-        elif(key == 's'):
-            self.stats["thrust angle: "] +=10
-            pass
-        elif(key == 'd'):
-            self.stats["thrust angle: "] -=10
-            pass
-
+       
+        self.stats["key pressed: "] = key.char
+        if (key.char =='w'):
+            self.stats["thrust: "] += 10
+        elif(key.char == 's'):
+            self.stats["thrust: "] -= 10
+        elif(key.char == 'a'):
+            self.stats["thrust angle: "] += 10
+        elif(key.char == 'd'):
+            self.stats["thrust angle: "] -= 10
+            
+    # Start listening for keyboard inputs
     def listen(self):
-        # Start listening for keyboard inputs
+        
         with keyboard.Listener(on_press=self.on_press) as listener:
             listener.join()
 
     #Run simulations
     def run(self):   
-    
         grid = Grid(self.x, self.y) 
         grid.make_grid()
         time_between_frame = self.set_framerate(30)
