@@ -3,7 +3,7 @@ from Grid import Grid
 import sys
 from Rocket import Rocket
 import threading
-
+from Display_panel import Display_panel
 from pynput import keyboard
 
 
@@ -24,6 +24,9 @@ class Main:
 
         #total frames
         self.iterations = 100
+
+        #dict w/stats
+        self.stats = {"velocity": 69}
 
     #routine to create rocket
     def create_rocket(self, length=3, width=1, weight=1000, angle=90):
@@ -55,36 +58,30 @@ class Main:
     
     # Function to handle keyboard input
     def on_press(key):
-        print('Key {} pressed.'.format(key))
+
+        print('{} press'.format(key))
 
     #Startup
     def run(self):
     
         grid = Grid(self.x, self.y) 
         grid.make_grid()
-        time_between_frame = self.set_framerate(10)
+        time_between_frame = self.set_framerate(30)
         grid.update_position(5,5)
         x = 0
         rocket = self.create_rocket()
+        display = Display_panel(True)
         while (x< self.iterations):
 
-            print("current position 1 and 2")
-            print(self.current_position[0], self.current_position[1])
             self.current_position[0] +=1
             self.current_position[1] +=1
             grid.update_position(self.current_position[0], self.current_position[1])
             
-            print("current position 1 and 2")
-            print(self.current_position[0], self.current_position[1])
             grid.print_grid()
-            print(round(time.time() * 1000))
+            display.update_info_panel(self.stats)
+            display.print_info_panel()
             time.sleep(time_between_frame)
-            print(round(time.time() * 1000))
             x += 1
-            print("frame ", x)
-        
-            #print(grid.x , iterations)
-            # grid.x wont find current position; if (grid.x == 1):
             
 if __name__ == '__main__':
     animation_thread = threading.Thread(target=Main().run())
