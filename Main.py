@@ -18,15 +18,19 @@ class Main:
         self.GRAVITY = -9.81 #m/s^2
         self.WEIGHT = 1000 #kg
         self.frame_rate = 60
-      
         self.time_between_frame = 1/60
+
         self.current_position = [0,0]
+        
+        
 
         #total frames
         self.iterations = 100
 
-        self.stats = {"velocity": 69,
-                      "key pressed: ": ""}
+        self.stats = {"velocity": 0,
+                      "key pressed: ": "",
+                      "thrust: ": 0,
+                      "thrust angle: ": 90}
 
     #routine to create rocket
     def create_rocket(self, length=3, width=1, weight=1000, angle=90):
@@ -58,9 +62,20 @@ class Main:
     
     # Function to handle keyboard input 
     def on_press(self, key):
-
         self.stats["key pressed: "] = str(key)
-        print(key)
+        
+        if (key == 'w'):
+            self.stats["thrust: "] +=10
+            pass
+        elif(key == 'a'):
+            self.stats["thrust: "] -=10
+            pass
+        elif(key == 's'):
+            self.stats["thrust angle: "] +=10
+            pass
+        elif(key == 'd'):
+            self.stats["thrust angle: "] -=10
+            pass
 
     def listen(self):
         # Start listening for keyboard inputs
@@ -87,6 +102,7 @@ class Main:
             display.update_info_panel(self.stats)
             if (self.has_panel):
                 display.print_info_panel()
+            
             time.sleep(time_between_frame)
             x += 1
             
