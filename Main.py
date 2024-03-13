@@ -9,7 +9,7 @@ from pynput import keyboard
 
 #Setup and run systems
 class Main:
-    def __init__(self, fps=60, x=100, y=100 , has_panel=True):
+    def __init__(self, fps=60, x=50, y=50 , has_panel=True):
         self.fps = 60
         self.x = x #for grid x-dimension 
         self.y = y #for grid y-dimension 
@@ -25,8 +25,8 @@ class Main:
         #total frames
         self.iterations = 100
 
-        #dict w/stats
-        self.stats = {"velocity": 69}
+        self.stats = {"velocity": 69,
+                      "key pressed: ": ""}
 
     #routine to create rocket
     def create_rocket(self, length=3, width=1, weight=1000, angle=90):
@@ -56,13 +56,19 @@ class Main:
 
         return ms_per_frame
     
-    # Function to handle keyboard input
-    def on_press(key):
+    # Function to handle keyboard input 
+    def on_press(self, key):
 
-        print('{} press'.format(key))
+        self.stats["key pressed: "] = str(key)
+        print(key)
 
-    #Startup
-    def run(self):
+    def listen(self):
+        # Start listening for keyboard inputs
+        with keyboard.Listener(on_press=self.on_press) as listener:
+            listener.join()
+
+    #Run simulations
+    def run(self):   
     
         grid = Grid(self.x, self.y) 
         grid.make_grid()
@@ -71,7 +77,7 @@ class Main:
         x = 0
         rocket = self.create_rocket()
         display = Display_panel(True)
-        while (x< self.iterations):
+        while (x< self.y):
 
             self.current_position[0] +=1
             self.current_position[1] +=1
@@ -79,15 +85,17 @@ class Main:
             
             grid.print_grid()
             display.update_info_panel(self.stats)
-            display.print_info_panel()
+            if (self.has_panel):
+                display.print_info_panel()
             time.sleep(time_between_frame)
             x += 1
             
 if __name__ == '__main__':
-    animation_thread = threading.Thread(target=Main().run())
+    main_instance = Main()
+    animation_thread = threading.Thread(target=main_instance.run)
+    keystroke = threading.Thread(target=main_instance.listen)
     animation_thread.daemon = True  # Daemonize the thread so it exits when the main thread exits
     animation_thread.start()
-    # Start listening for keyboard input
-    with keyboard.Listener(on_press=Main.on_press) as listener:
-        listener.join()
+    keystroke.start()
+    
   

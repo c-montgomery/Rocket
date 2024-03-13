@@ -6,10 +6,12 @@ class Display_panel:
         self.velocity = 0
         self.acceleration = 0
         self.x_position = 0
+        self.key = ""
         self.info = {
             "velocity": self.velocity,
             "acceleration": self.acceleration,
-            "x-position": self.x_position
+            "x-position": self.x_position,
+            "key pressed: ": self.key
         }
 
     def set_velocity(self, vel):
@@ -23,12 +25,11 @@ class Display_panel:
 
     def update_info_panel(self, info_in):
         for x in info_in.keys():
-            if x == "velocity":
-                self.info["velocity"] = info_in[x]
-                print(info_in[x])
-                print("rec'd some shit^^")
+            self.info[x] = info_in[x]
+            
 
     def print_info_panel(self):
         for x in self.info:
-            print(x, " " , end = "")
+            print(x, "", self.info[x], "" , end = "")
+        
     
