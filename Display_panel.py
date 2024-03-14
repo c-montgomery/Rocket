@@ -5,6 +5,7 @@ class Display_panel:
         self.is_displaying = is_displaying
         self.velocity = 0
         self.acceleration = 0
+        self.y_position = 0
         self.x_position = 0
         self.key = ""
         self.info = {
@@ -26,7 +27,6 @@ class Display_panel:
     def update_info_panel(self, info_in):
         for x in info_in.keys():
             self.info[x] = info_in[x]
-            
 
     def print_info_panel(self):
         count = 0

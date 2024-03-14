@@ -1,17 +1,18 @@
 
-#Constant
-GRAVITY = 9.81
 
 
 class Rocket:
-    def __init__(self, length, width, weight, angle = 0):
-        self.length = length
-        self.width = width
-        self.weight = weight
-        self.thrust = 0
-        self.angle = 0
-        self.is_engine_on = False
+    def __init__(self, length, width, mass, angle = 0):
+        self.LENGTH = length
+        self.WIDTH = width
+        self.MASS = mass
+        self.thrust = 0#thrust force
+        self.angle = 0#Angle of thrust
+        self.orientation = 90 #orientation of vehicle
         self.has_visible_thrust = False
+        self.GRAVITY = -9.81
+        self.GRAVxMASS = self.GRAVITY * self.MASS
+        
 
     #Setters
     def set_length(self, length):
@@ -29,8 +30,6 @@ class Rocket:
     def set_angle(self, angle):
         self.angle = angle
 
-    
-
 
     #Getter
     def get_length(self):
@@ -44,7 +43,9 @@ class Rocket:
     
     def get_thrust(self):
         return self.thrust
-    
+    def get_orientation(self):
+        return self.orientation
+
     #draw rocket on grid
     def draw_rocket(self):
         pass
@@ -56,13 +57,6 @@ class Rocket:
     def toggle_animate_thrust(self):
         pass
 
-    def toggle_engine(self):
-        if self.is_engine_on == True:
-            self.is_engine_on = False
-            self.has_visible_thrust = False
-        else:
-            self.is_engine_on = True
-            self.has_visible_thrust = True
-            #toggle_animate_thrust(self)
+    
 
     

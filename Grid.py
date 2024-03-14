@@ -26,17 +26,34 @@ class Grid:
 
     #erase last position, draw new
     #Converts NE Origin to SE--incomplete
-    def update_position(self, x, y):
-        
-       
+    def update_position(self, x, y, orientation):
         try:
             #overwrite last position w/a "."
-            self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
-            self.last_position = [(x), (y)]
-            self.grid[x][y] = "#" #rocket center
+            #currently doesnt know orientation
+            
+            
+            if (orientation>45 and orientation <135 or orientation >225 and orientation <315):
+                self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
+                self.grid[int(self.last_position[0])][int(self.last_position[1]+1)]= "."
+                self.grid[int(self.last_position[0])][int(self.last_position[1]-1)]= "."
+                self.last_position = [(x), (y)]
+                self.grid[x][y] = "#" #rocket center
+                self.grid[x][y+1]= "#"
+                self.grid[x][y-1] = "#"
+            elif(orientation<45 and orientation >315 or orientation>135 and orientation<225):
+                self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
+                self.grid[int(self.last_position[0])][int(self.last_position[1]+1)]= "."
+                self.grid[int(self.last_position[0])][int(self.last_position[1]-1)]= "."
+                self.last_position = [(x), (y)]
+                self.grid[x][y] = "#" #rocket center
+                self.grid[x-1][y+1]= "#"
+                self.grid[x+1][y-1] = "#"
+
         except IndexError:
             print("out of range")
-            
+    
+   
+
 
 
 
