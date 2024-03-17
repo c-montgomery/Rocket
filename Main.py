@@ -59,26 +59,30 @@ class Main:
     
     # Function to handle keyboard input 
     def on_press(self, key):
-       
-        self.stats["key pressed: "] = key.char
-        if (key.char =='w'):
-            if (self.stats["thrust: "] < 100):
-                self.stats["thrust: "] += 10
-        elif(key.char == 's'):
-            if (self.stats["thrust: "] >= 10):
-                self.stats["thrust: "] -= 10
-        elif(key.char == 'a'):
-            if (self.stats["orientation: "] != 360):
-                self.stats["orientation: "] += 10
-            else:
-                self.stats["orientation: "] = 10
+        try:
+            self.stats["key pressed: "] = key.char
+            if (key.char =='w'):
+                if (self.stats["thrust: "] < 100):
+                    self.stats["thrust: "] += 10
+            elif(key.char == 's'):
+                if (self.stats["thrust: "] >= 10):
+                    self.stats["thrust: "] -= 10
+            elif(key.char == 'a'):
+                if (self.stats["orientation: "] != 360):
+                    self.stats["orientation: "] += 10
+                else:
+                    self.stats["orientation: "] = 10
 
-        elif(key.char == 'd'):
-            if (self.stats["orientation: "] != 0):
-                
-                self.stats["orientation: "] -= 10
-            else:
-                self.stats["orientation: "] = 350
+            elif(key.char == 'd'):
+                if (self.stats["orientation: "] != 0):
+                    
+                    self.stats["orientation: "] -= 10
+                else:
+                    self.stats["orientation: "] = 350
+        except AttributeError:
+            print("Attribute Error caught")
+            print("key: ", key)
+            self.stats["key pressed: "] = key
             
     # Start listening for keyboard inputs
     def listen(self):

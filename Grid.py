@@ -20,7 +20,7 @@ class Grid:
         print()
         for i in range(self.y):
             for j in range(self.x):
-                print(self.grid[j][i], end="")
+                print(self.grid[j][self.y - (i+1)], end="")
               
             print()
 
@@ -38,7 +38,7 @@ class Grid:
         self.grid[int(self.last_position[0]+1)][int(self.last_position[1]-1)]= "."
 
     #erase last position, draw new
-    #Converts NE Origin to SE--incomplete
+    
     def update_position(self, x, y, orientation):
         self.clear_old_position()
         try:
