@@ -59,4 +59,14 @@ class Rocket:
 
     
 
-    
+    #Physics
+    def calc_accel(self):
+        final_vel**2 -  
+
+    def calc_net_force(self):
+        pass
+        mg = self.GRAVxMASS
+        accel = self.calc_accel()
+        net = -(mg)+ accel
+        return net
+        
