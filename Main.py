@@ -23,16 +23,17 @@ class Main:
         self.current_position = [24,3]
 
         #total frames
-        self.iterations = 400
+        self.iterations = 4000
 
         self.stats = {"velocity": 0,
                       "key pressed: ": "",
                       "thrust: ": 0,
                       "thrust angle: ": 90,
                       "orientation: ": 90,
-                      "debug": ""}
-
-    #routine to create rocket
+                      "debug": "",
+                      "iterations: ": 0}
+    
+    #routine to create rocket object
     def create_rocket(self, length=3, width=1, weight=1000, angle=90):
         rocket = Rocket(length, width, weight, angle )
         return rocket
@@ -47,7 +48,7 @@ class Main:
     #add 1 to coordinates 
     def increase_position(self):
         self.set_position(self.x+1,self.y+1)
-        return self.current_position
+        return self.current_positiond
 
 
     #set frames/second
@@ -64,7 +65,7 @@ class Main:
             if (self.stats["thrust: "] < 100):
                 self.stats["thrust: "] += 10
         elif(key.char == 's'):
-            if (self.stats["thrust: "] > 10):
+            if (self.stats["thrust: "] >= 10):
                 self.stats["thrust: "] -= 10
         elif(key.char == 'a'):
             if (self.stats["orientation: "] != 360):
@@ -73,10 +74,11 @@ class Main:
                 self.stats["orientation: "] = 10
 
         elif(key.char == 'd'):
-            if (self.stats["orientation: "] >0):
+            if (self.stats["orientation: "] != 0):
+                
                 self.stats["orientation: "] -= 10
             else:
-                (self.stats["orientation: "] != 350)
+                self.stats["orientation: "] = 350
             
     # Start listening for keyboard inputs
     def listen(self):
@@ -90,16 +92,18 @@ class Main:
         grid.make_grid()
         rocket = Rocket(3,1,1000,0)
         time_between_frame = self.set_framerate(30)
+        #grid.clear_old_position()
         grid.update_position(5,5, rocket.get_orientation())
         x = 0
         display = Display_panel(True)
-        while (x< self.y):
+        while (self.stats["iterations: "] < self.iterations):
 
             #self.current_position[0] +=1
             #self.current_position[1] +=1
-            grid.update_position(self.current_position[0], self.current_position[1],rocket.get_orientation())
+            grid.update_position(self.current_position[0], self.current_position[1],self.stats["orientation: "])
             
             grid.print_grid()
+            self.stats["iterations: "] = x
             display.update_info_panel(self.stats)
             if (self.has_panel):
                 display.print_info_panel()

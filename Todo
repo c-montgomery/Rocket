@@ -16,7 +16,7 @@ SIM
 				w/s = thrust --DONE
 				a/d = rudder angle --DONE
 				
-				animate angle
+				animate angle --1/2DONE
 				
 				animate thrust
 		
