@@ -14,22 +14,32 @@ class Main:
         self.x = x #for grid x-dimension 
         self.y = y #for grid y-dimension 
         self.has_panel = True
+        
+        #Rocket
+        self.orientation = 90
+        self.throttle = 0
         #Constants
         self.GRAVITY = -9.81 #m/s^2
         self.WEIGHT = 1000 #kg
         self.frame_rate = 60
-        self.time_between_frame = 1/60
 
         self.current_position = [24,3]
 
         #total frames
         self.iterations = 4000
+        self.start_time = 0
+         #time
+        self.elapsed = 0
+        self.time_since_last_frame = 0
 
         self.stats = {"velocity": 0,
+                      "acceleration: ": 0,
                       "key pressed: ": "",
-                      "thrust: ": 0,
+                      "throttle: ": 0,
                       "thrust angle: ": 90,
                       "orientation: ": 90,
+                      "fpv": 0,
+                      "total_elapsed: ": 0,
                       "debug": "",
                       "iterations: ": 0}
     
@@ -62,24 +72,30 @@ class Main:
         try:
             self.stats["key pressed: "] = key.char
             if (key.char =='w'):
-                if (self.stats["thrust: "] < 100):
-                    self.stats["thrust: "] += 10
+                if (self.stats["throttle: "] < 100):
+                    self.stats["throttle: "] += 10
+                    self.throttle = self.stats["throttle: "]
             elif(key.char == 's'):
-                if (self.stats["thrust: "] >= 10):
-                    self.stats["thrust: "] -= 10
+                if (self.stats["throttle: "] >= 10):
+                    self.stats["throttle: "] -= 10
+                    self.throttle = self.stats["throttle: "]
             elif(key.char == 'a'):
                 if (self.stats["orientation: "] != 360):
                     self.stats["orientation: "] += 10
+                    self.orientation = self.stats["orientation: "]
                 else:
                     self.stats["orientation: "] = 10
+                    self.orientation = self.stats["orientation: "]
 
             elif(key.char == 'd'):
                 if (self.stats["orientation: "] != 0):
                     
                     self.stats["orientation: "] -= 10
+                    self.orientation = self.stats["orientation: "]
                 else:
                     self.stats["orientation: "] = 350
-        except AttributeError:
+                    self.orientation = self.stats["orientation: "]
+        except AttributeError or KeyError:
             print("Attribute Error caught")
             print("key: ", key)
             self.stats["key pressed: "] = key
@@ -90,25 +106,40 @@ class Main:
         with keyboard.Listener(on_press=self.on_press) as listener:
             listener.join()
 
+    #pass info to rocket
+    def update_rocket(self, object):
+        object.set_throttle(self.throttle)
+        object.set_orientation(self.orientation)
+
+
     #Run simulations
     def run(self):   
-        grid = Grid(self.x, self.y) 
+        self.start_time = time.time()
+        grid = Grid(self.x, self.y)
         grid.make_grid()
+
         rocket = Rocket(3,1,1000,0)
         time_between_frame = self.set_framerate(30)
-        #grid.clear_old_position()
         grid.update_position(5,5, rocket.get_orientation())
-        x = 0
+        x = 0 #measures iterations
+        
         display = Display_panel(True)
+        start_time = time.time()
         while (self.stats["iterations: "] < self.iterations):
-
-            #self.current_position[0] +=1
-            #self.current_position[1] +=1
+            
+            self.elapsed = time.time() - start_time
+            self.time_since_last_frame = time.time() - self.elapsed
+            
+            self.stats["elapsed: "] = "{:4.2f}".format(self.elapsed)
             grid.update_position(self.current_position[0], self.current_position[1],self.stats["orientation: "])
             
             grid.print_grid()
             self.stats["iterations: "] = x
+            self.stats["acceleration: "] = rocket.calc_accel()
+            self.stats["velocity: "] = rocket.calc_velocity()
+            rocket.update_info_panel(self.stats)
             display.update_info_panel(self.stats)
+            self.update_rocket(rocket)
             if (self.has_panel):
                 display.print_info_panel()
             

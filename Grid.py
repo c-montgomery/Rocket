@@ -46,7 +46,7 @@ class Grid:
             #currently doesnt know orientation
             self.last_position = [x, y]
             if (orientation>67.5 and orientation <112.5 or orientation >247.5 and orientation <292.5):
-                print("tripped first")
+               
                 self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
                 self.grid[int(self.last_position[0])][int(self.last_position[1]+1)]= "."
                 self.grid[int(self.last_position[0])][int(self.last_position[1]-1)]= "."
@@ -55,7 +55,7 @@ class Grid:
                 self.grid[x][y+1]= "#"
                 self.grid[x][y-1] = "#"
             elif (orientation>22.5 and orientation <67.5 or orientation >202.5 and orientation <247.5):
-                print("tripped second")
+            
                 self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
                 self.grid[int(self.last_position[0])][int(self.last_position[1]+1)]= "."
                 self.grid[int(self.last_position[0])][int(self.last_position[1]-1)]= "."
@@ -64,7 +64,7 @@ class Grid:
                 self.grid[x+1][y+1]= "#"
                 self.grid[x-1][y-1] = "#"
             elif((orientation<22.5 or orientation >337.5 )or orientation>157.5 and orientation<202.5):
-                print("tripped third")
+             
                 self.grid[int(self.last_position[0])][int(self.last_position[1])]= "."
                 self.grid[int(self.last_position[0])][int(self.last_position[1]+1)]= "."
                 self.grid[int(self.last_position[0])][int(self.last_position[1]-1)]= "."
@@ -73,7 +73,6 @@ class Grid:
                 self.grid[x-1][y]= "#"
                 self.grid[x+1][y] = "#"
             elif(orientation):
-                print("DIDNT trip")
                
                 self.last_position = [(x), (y)]
                 self.grid[x][y] = "#" #rocket center

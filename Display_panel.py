@@ -31,10 +31,10 @@ class Display_panel:
     def print_info_panel(self):
         count = 0
         for x in self.info:
-            print(x, "", self.info[x], "" , end = "")
+            print(x, "", self.info[x], "|| " , end = "")
             count+=1
-
-            if (count == 2):
+            
+            if (count % 3 == 0):
                 print()
                 count = 0
         
