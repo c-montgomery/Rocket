@@ -32,7 +32,7 @@ class SimObject:
         self.rotated_rocket = pygame.image.load("rocket.png")
         self.shipRect = self.rocket_png.get_rect()
         self.shipRect.x = self.x_size / 2
-        self.shipRect.y = self.y_size - 31
+        self.shipRect.y = self.y_size 
         self.y_offset = 0
         self.x_offset = 0
         
@@ -47,9 +47,16 @@ class SimObject:
             self.elapsed += elapsed
         #react to user inputs       
     def check_keypresses(self):
+        self.maintain_center(3) #Maintain center without key presses, yuck
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: sys.exit()
+            print("shitto")
+            if event.type == pygame.QUIT: 
+                sys.exit()
+
+            
+            
             elif event.type == pygame.KEYDOWN:
+                
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
                
@@ -74,22 +81,24 @@ class SimObject:
                     print("THROTTLE DOWN")
                     if self.rocket.get_throttle() > 0:
                         self.rocket.set_throttle(current_throttle - 10)
+
         #rotates image about center. rotates like jumping bean w/o this
     def maintain_center(self, direction ):
                 degrees = self.rocket.get_rotation()
                 if (direction ==1):
                     degrees -= 10
                     self.rocket.set_rotation(degrees)
-                else:
+                elif (direction ==0):
                     degrees += 10
                     self.rocket.set_rotation(degrees)
-                self.shipRect = self.rocket_png.get_rect()
-                self.screen.fill(grey)
-                x,y = self.shipRect.center
-                self.rotated_rocket = pygame.transform.rotate(self.rocket_png, degrees) 
-                self.x_offset, self.y_offset = self.rotated_rocket.get_rect().center
-                self.shipRect.center = (x ,y - self.y_offset)
-                
+                else:
+                    self.shipRect = self.rocket_png.get_rect()
+                    self.screen.fill(grey)
+                    x,y = self.shipRect.center
+                    self.rotated_rocket = pygame.transform.rotate(self.rocket_png, degrees) 
+                    self.x_offset, self.y_offset = self.rotated_rocket.get_rect().center
+                    self.shipRect.center = (x ,y )
+                  
             
         #Draw bounding rectangle
     def draw_rectangle(self, object):
@@ -97,13 +106,17 @@ class SimObject:
 
         #fill screen, update image and rectangle placement. Display changes
     def update_pos(self):
-        self.shipRect.y = self.y_size - (30 + math.floor((self.elapsed/ 500)**1.4 *(1.2**6)))
+        print(self.shipRect.x)
+        print(self.shipRect.y)
         #print(self.x_offset)
         if self.rocket.get_rotation() != 0:
-            self.shipRect.x =  200  -(self.x_offset)  
+            self.shipRect.x = 200  -(self.x_offset)
+            self.shipRect.y = self.y_size - ( math.floor(((self.elapsed/ 1000)**1 *(1.2**6)))) -self.y_offset 
+            
         else:
             self.shipRect.x = 197
-        #self.screen.blit(self.rocket_png, (self.shipRect.center[0], self.shipRect.y - (self.rocket.get_height()*2 )))
+            self.shipRect.y = self.y_size - ( math.floor(((self.elapsed/ 1000)**1 *(1.2**6)))) -self.y_offset 
+        
         self.screen.fill(grey)
         self.screen.blit(self.rotated_rocket, self.shipRect)
         pygame.display.flip()
