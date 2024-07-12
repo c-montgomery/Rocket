@@ -73,12 +73,11 @@ class SimObject:
                     #pygame.display.flip()
                
                 elif event.key == pygame.K_UP:
-                    print("THROTTLE UP")
-                    
+                    print(self.throttle + "% throttle")
                     if int(current_throttle) < 1000:
                         self.rocket.set_throttle(current_throttle +100)
                 elif event.key == pygame.K_DOWN:
-                    print("THROTTLE DOWN")
+                    print(self.throttle + "% throttle")
                     if self.rocket.get_throttle() > 0:
                         self.rocket.set_throttle(current_throttle - 100)
 
@@ -115,8 +114,8 @@ class SimObject:
         #do math to find position, rotation, etc and print to screen
     def update_pos(self):
         self.print_spacer()
-        print("x-position", self.shipRect.x)
-        print("y-position", self.shipRect.y)
+        print("x-position", str(self.shipRect.x) + "m")
+        print("y-position", str(self.shipRect.y) + "m")
         self.print_spacer()
 
         #print(self.x_offset)
@@ -214,18 +213,18 @@ class Rocket:
         self.accel = mg + propulsion
         if self.accel < 0:
             self.accel = 0
-        print("self.accel " , self.accel)
+        print("self.accel " , str(self.accel) + "m/s^2")
     
     def calc_v_final(self):
         self.v_final = self.velocity + self.accel* (self.time_elapsed/1000)
         print("self.time_elapsed(ms)", self.time_elapsed)
         self.velocity = self.v_final/10000 #Shot in the dark, the /1000
-        print("v_final", self.v_final)
+        print("v_final", str(self.v_final) + "m/s")
         
     
     def calc_distance(self):
         self.distance = self.velocity*(self.time_elapsed/1000) + ( .5 * self.accel)* (self.time_elapsed/1000)**2
-        print("distance", self.distance)
+        print("distance", str(self.distance) + "m")
         return self.distance
         
 
