@@ -105,9 +105,20 @@ class SimObject:
         pygame.draw.rect(object, (255,255,255), object.get_bounding_rect(), width = 1)
 
         #fill screen, update image and rectangle placement. Display changes
+
+        #Print line for output readablity
+    def print_spacer(self):
+        print()
+        print("-------------------------------------")
+        print()
+
+        #do math to find position, rotation, etc and print to screen
     def update_pos(self):
-        print(self.shipRect.x)
-        print(self.shipRect.y)
+        self.print_spacer()
+        print("x-position", self.shipRect.x)
+        print("y-position", self.shipRect.y)
+        self.print_spacer()
+
         #print(self.x_offset)
         if self.rocket.get_rotation() != 0:
             self.shipRect.x = 200  -(self.x_offset)
@@ -120,7 +131,6 @@ class SimObject:
             #self.shipRect.y = self.y_size - ( math.floor(((self.elapsed/ 1000)**1 *(1.2**6)))) -self.y_offset 
             self.rocket.compute_update()
             self.shipRect.y = self.y_size - self.rocket.calc_distance()
-            print("rect y = ", self.shipRect.y)
         self.rocket.set_time_elapsed(self.elapsed)
         self.screen.fill(grey)
         self.screen.blit(self.rotated_rocket, self.shipRect)
