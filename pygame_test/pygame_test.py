@@ -20,13 +20,13 @@ class SimObject:
         self.x_size = x_size    #Window size
         self.y_size = y_size    #Window size
         self.screen = pygame.display.set_mode((x_size, y_size))
-        self.FPS = 30
+        self.FPS = 60
         self.clock = pygame.time.Clock()
         self.time = self.clock.tick()
         self.elapsed = 0
 
         #Make rocket
-        self.rocket = Rocket(6,31, 200, 0, 0, 20)
+        self.rocket = Rocket(2,31, 200, 0, 0, 290.7)
         self.rocket_png = pygame.image.load("rocket.png")
         self.rocket_png.convert_alpha()
         self.rotated_rocket = pygame.image.load("rocket.png")
@@ -52,15 +52,12 @@ class SimObject:
             current_throttle = self.rocket.get_throttle()
             if event.type == pygame.QUIT: 
                 sys.exit()
-
-            
             
             elif event.type == pygame.KEYDOWN:
                 
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
-               
-
+  
                 elif event.key == pygame.K_LEFT:
                     print("Left")
                     self.maintain_center(0)
@@ -68,18 +65,17 @@ class SimObject:
 
                 elif event.key == pygame.K_RIGHT:
                     print("RIGHT")
-                    
                     self.maintain_center(1)
                     #pygame.display.flip()
                
                 elif event.key == pygame.K_UP:
-                    print(self.throttle + "% throttle")
-                    if int(current_throttle) < 1000:
+                    
+                    if int(current_throttle) < self.rocket.max_thrust:
                         self.rocket.set_throttle(current_throttle +100)
                 elif event.key == pygame.K_DOWN:
-                    print(self.throttle + "% throttle")
                     if self.rocket.get_throttle() > 0:
                         self.rocket.set_throttle(current_throttle - 100)
+        print(str("{:.0f}".format(self.rocket.throttle/10) )+ "% throttle")
 
         #rotates image about center. rotates like jumping bean w/o this
     def maintain_center(self, direction ):
@@ -95,10 +91,10 @@ class SimObject:
                     self.screen.fill(grey)
                     x,y = self.shipRect.center
                     self.rotated_rocket = pygame.transform.rotate(self.rocket_png, degrees) 
+                    
                     self.x_offset, self.y_offset = self.rotated_rocket.get_rect().center
                     self.shipRect.center = (x ,y )
-                  
-            
+                    
         #Draw bounding rectangle
     def draw_rectangle(self, object):
         pygame.draw.rect(object, (255,255,255), object.get_bounding_rect(), width = 1)
@@ -116,6 +112,8 @@ class SimObject:
         self.print_spacer()
         print("x-position", str(self.shipRect.x) + "m")
         print("y-position", str(self.shipRect.y) + "m")
+        print("throttle", self.rocket.throttle)
+        print(self.shipRect.y)
         self.print_spacer()
 
         #print(self.x_offset)
@@ -130,11 +128,15 @@ class SimObject:
             #self.shipRect.y = self.y_size - ( math.floor(((self.elapsed/ 1000)**1 *(1.2**6)))) -self.y_offset 
             self.rocket.compute_update()
             self.shipRect.y = self.y_size - self.rocket.calc_distance()
+            print(self.shipRect.y)
         self.rocket.set_time_elapsed(self.elapsed)
         self.screen.fill(grey)
         self.screen.blit(self.rotated_rocket, self.shipRect)
+        print(self.shipRect.y)
+        print(self.shipRect.x)
         pygame.display.flip()
-        #self.draw_rectangle(self.screen)
+    
+        
 
 
 ########################################################################################
@@ -211,8 +213,7 @@ class Rocket:
         mg = self.mass * self.gravity #-981
         propulsion = (self.throttle/1000) *self.max_thrust
         self.accel = mg + propulsion
-        if self.accel < 0:
-            self.accel = 0
+        
         print("self.accel " , str(self.accel) + "m/s^2")
     
     def calc_v_final(self):
@@ -228,7 +229,7 @@ class Rocket:
         return self.distance
         
 
-simObj = SimObject(500,840)
+simObj = SimObject(500,1000)
 simObj.loop()
 
 
