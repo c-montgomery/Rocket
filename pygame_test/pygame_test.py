@@ -44,6 +44,7 @@ class SimObject:
         
     #Main loop 
     def loop(self):
+        pygame.key.set_repeat(200,100)
         self.time_start = time.time()
         while (self.isRunning):
             self.check_keypresses()
@@ -103,19 +104,19 @@ class SimObject:
     def maintain_center(self, direction ):
                 degrees = self.rocket.get_rotation()
                 if (direction ==1):
-                    degrees -= 10
+                    degrees -= 5
                     self.rocket.set_rotation(degrees)
                 elif (direction ==0):
-                    degrees += 10
+                    degrees += 5
                     self.rocket.set_rotation(degrees)
-                else:
-                    self.shipRect = self.rocket_png.get_rect()
-                    self.screen.fill(grey)
-                    x,y = self.shipRect.center
-                    self.rotated_rocket = pygame.transform.rotate(self.rocket_png, degrees) 
-                    
-                    self.x_offset, self.y_offset = self.rotated_rocket.get_rect().center
-                    self.shipRect.center = (x ,y )
+                
+                self.shipRect = self.rocket_png.get_rect()
+                self.screen.fill(grey)
+                x,y = self.shipRect.center
+                self.rotated_rocket = pygame.transform.rotate(self.rocket_png, degrees) 
+                
+                self.x_offset, self.y_offset = self.rotated_rocket.get_rect().center
+                self.shipRect.center = (x ,y )
                     
         #Draw bounding rectangle
     def draw_rectangle(self, object):
@@ -145,12 +146,12 @@ class SimObject:
             self.shipRect.x = 200  -(self.x_offset)
             self.rocket.calc_net_accel()
             self.rocket.calc_v_final()
-            self.shipRect.y = self.y_size - self.rocket.calc_distance()
+            self.shipRect.y = self.y_size - (self.rocket.calc_distance() + self.y_offset)
         else:
             self.shipRect.x = 197
             self.rocket.calc_net_accel()
             self.rocket.calc_v_final()
-            self.shipRect.y = self.y_size - self.rocket.calc_distance()
+            self.shipRect.y = self.y_size - (self.rocket.calc_distance() + self.y_offset)
             self.rocket.set_y = self.shipRect.y
         self.rocket.set_time_elapsed(self.elapsed)
         #update screen
