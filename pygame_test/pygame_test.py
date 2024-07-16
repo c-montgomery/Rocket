@@ -1,5 +1,6 @@
 import sys, pygame
 from pygame import *
+import time
 import math
 import os
 
@@ -20,13 +21,18 @@ class SimObject:
         self.x_size = x_size    #Window size
         self.y_size = y_size    #Window size
         self.screen = pygame.display.set_mode((x_size, y_size))
-        self.FPS = 60
+        self.FPS = 30
         self.clock = pygame.time.Clock()
         self.time = self.clock.tick()
         self.elapsed = 0
+        self.last_time = time.time()
+        self.time_segment = 0
+        self.time_start = 0
+        self.elapsed_total = 0
+        self.isRunning = True
 
         #Make rocket
-        self.rocket = Rocket(2,31, 200, 0, 0, 290.7)
+        self.rocket = Rocket(2,31, 200, 31, 0, 290.7)
         self.rocket_png = pygame.image.load("rocket.png")
         self.rocket_png.convert_alpha()
         self.rotated_rocket = pygame.image.load("rocket.png")
@@ -38,13 +44,18 @@ class SimObject:
         
     #Main loop 
     def loop(self):
-
-        while True:
+        self.time_start = time.time()
+        while (self.isRunning):
             self.check_keypresses()
+            self.print_debug()
             self.update_pos()
+            elapsed = time.time() - self.elapsed_total
             
-            elapsed = self.clock.tick(self.FPS)
-            self.elapsed += elapsed
+            self.time_segment = elapsed
+            self.rocket.set_time_segment(elapsed)
+            self.elapsed_total += elapsed
+            
+
         #react to user inputs       
     def check_keypresses(self):
         self.maintain_center(3) #Maintain center without key presses, yuck
@@ -71,10 +82,10 @@ class SimObject:
                 elif event.key == pygame.K_UP:
                     
                     if int(current_throttle) < self.rocket.max_thrust:
-                        self.rocket.set_throttle(current_throttle +100)
+                        self.rocket.set_throttle(current_throttle + .2)
                 elif event.key == pygame.K_DOWN:
                     if self.rocket.get_throttle() > 0:
-                        self.rocket.set_throttle(current_throttle - 100)
+                        self.rocket.set_throttle(current_throttle - .2)
         print(str("{:.0f}".format(self.rocket.throttle/10) )+ "% throttle")
 
         #rotates image about center. rotates like jumping bean w/o this
@@ -101,40 +112,45 @@ class SimObject:
 
         #fill screen, update image and rectangle placement. Display changes
 
-        #Print line for output readablity
-    def print_spacer(self):
+       
+    def print_debug(self):
         print()
-        print("-------------------------------------")
         print()
+        print("get v ", self.rocket.get_v())
+        print("get v_final", self.rocket.get_v_final())
+        print("get net_accel", str(self.rocket.net_accel))
+        print("get time segment", str(self.rocket.get_time_segment()))      
+        print("rocketx" ,str(self.rocket.get_x()))
+        print("rockety", str(self.rocket.get_y()))
+        print("throttle", self.rocket.throttle)
+        print(self.shipRect.y)
+       
 
         #do math to find position, rotation, etc and print to screen
     def update_pos(self):
-        self.print_spacer()
-        print("x-position", str(self.shipRect.x) + "m")
-        print("y-position", str(self.shipRect.y) + "m")
-        print("throttle", self.rocket.throttle)
-        print(self.shipRect.y)
-        self.print_spacer()
+        
 
-        #print(self.x_offset)
         if self.rocket.get_rotation() != 0:
             self.shipRect.x = 200  -(self.x_offset)
             #self.shipRect.y = self.y_size - ( math.floor(((self.elapsed/ 1000)**1 *(1.2**6)))) -self.y_offset 
-            self.rocket.compute_update()
+            self.rocket.calc_net_accel()
+            self.rocket.calc_v_final()
             self.shipRect.y = self.y_size - self.rocket.calc_distance()
         else:
             self.shipRect.x = 197
             
             #self.shipRect.y = self.y_size - ( math.floor(((self.elapsed/ 1000)**1 *(1.2**6)))) -self.y_offset 
-            self.rocket.compute_update()
+            #self.rocket.compute_update()
+            self.rocket.calc_net_accel()
+            self.rocket.calc_v_final()
             self.shipRect.y = self.y_size - self.rocket.calc_distance()
-            print(self.shipRect.y)
+            self.rocket.set_y = self.shipRect.y
         self.rocket.set_time_elapsed(self.elapsed)
+        #update screen
         self.screen.fill(grey)
         self.screen.blit(self.rotated_rocket, self.shipRect)
-        print(self.shipRect.y)
-        print(self.shipRect.x)
         pygame.display.flip()
+        
     
         
 
@@ -144,23 +160,25 @@ class SimObject:
 ########################################################################################
 
 class Rocket:
-    def __init__(self, height, width, x, y, rotation, throttle, mass=100, fuel=999, max_fuel=999, max_thrust=2000):
+    def __init__(self, height, width, x, y, rotation, throttle=10, mass=100, fuel=999, max_fuel=999, max_thrust=1000):
         self.x = x
         self.y = y
         self.height = height
         self.width = width
         self.center = (0,0)
         self.rotation = rotation
-        self.throttle = throttle
-        self.mass = mass
+        self.throttle = 98.1
+        self.mass = 100
         self.fuel = fuel
-        self.velocity = 0
+        self.v = 0
         self.v_final = 0
         self.max_fuel = max_fuel
         self.max_thrust = max_thrust
         self.gravity = -9.81
         self.time_elapsed = 0
+        self.time_segment=0
         self.distance = 0
+        self.net_accel = 0
 
     # SETTERS
     def set_x(self, x):
@@ -179,14 +197,19 @@ class Rocket:
         self.width = width
     def set_center(self, center):
         self.center = center
+    def set_time_segment(self,time):
+        self.time_segment = time
     def set_time_elapsed(self,time):
         self.time_elapsed = time
+
 
     # GETTERS
     def get_x(self):
         return self.x
     def get_y(self):
         return self.y
+    def get_throttle(self):
+        return self.throttle
     def get_width(self):
         return self.width
     def get_height(self):
@@ -195,15 +218,14 @@ class Rocket:
         return self.weight
     def get_rotation(self):
         return self.rotation
-    def get_throttle(self):
-        return self.throttle
-    def get_mass(self):
-        return self.mass
-    def get_fuel(self):
-        return self.fuel
-    def get_center(self, center):
-        return self.center
-    
+    def get_distance(self):
+        return self.calc_distance
+    def get_v(self):
+        return self.v
+    def get_v_final(self):
+        return self.v_final
+    def get_time_segment(self):
+        return self.time_segment
     def compute_update(self):
         self.calc_net_accel()
         self.calc_v_final()
@@ -211,22 +233,39 @@ class Rocket:
     
     def calc_net_accel(self):
         mg = self.mass * self.gravity #-981
-        propulsion = (self.throttle/1000) *self.max_thrust
-        self.accel = mg + propulsion
+        propulsion = (self.throttle/100) * self.max_thrust
+        print(propulsion)
+        self.net_accel = mg + propulsion
         
-        print("self.accel " , str(self.accel) + "m/s^2")
+        print("self.accel " , str(self.net_accel) + "m/s^2")
     
     def calc_v_final(self):
-        self.v_final = self.velocity + self.accel* (self.time_elapsed/1000)
-        print("self.time_elapsed(ms)", self.time_elapsed)
-        self.velocity = self.v_final/10000 #Shot in the dark, the /1000
-        print("v_final", str(self.v_final) + "m/s")
+        #velocity
+        self.v_final = self.v + self.net_accel *  self.time_segment
+        self.v = self.v_final
+        # self.v_final = self.v + self.net_accel* (self.time_elapsed/1000)
+        # print("self.time_elapsed(ms)", self.time_elapsed)
+        # self.v = self.v_final/10000 #Shot in the dark, the /1000
+        # print("v_final", str(self.v_final) + "m/s")
         
     
     def calc_distance(self):
-        self.distance = self.velocity*(self.time_elapsed/1000) + ( .5 * self.accel)* (self.time_elapsed/1000)**2
-        print("distance", str(self.distance) + "m")
-        return self.distance
+        #distance
+        print("0")
+        if (self.y <= 31 and self.v_final < 0):
+            print("1")
+            self.y = 31
+            self.v = 0
+            self.v_final = 0
+        else:
+            print("2")
+            self.y +=(self.v_final * (self.time_segment) + (.5 * self.net_accel * (self.time_segment)**2))
+
+        return self.y
+          #  time.sleep(.2)
+        # self.distance = self.v*(self.time_elapsed/1000) + ( .5 * self.net_accel)* (self.time_elapsed/1000)**2
+        # print("distance", str(self.distance) + "m")
+        # return self.distance
         
 
 simObj = SimObject(500,1000)

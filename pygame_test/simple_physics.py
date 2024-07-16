@@ -22,6 +22,7 @@ class projectile:
         self.time_start = 0
         self.elapsed_total = 0
         self.propulsion = 0
+        self.isRunning = True
         
 
     def output(self, height, mg):
@@ -43,7 +44,7 @@ class projectile:
         #
         output = 0
         print("ran run")
-        while(True):
+        while(self.isRunning):
             
            
             self.time_segment = time.time() - self.last_time
@@ -68,8 +69,10 @@ class projectile:
             self.v = self.v_final
             self.vector()
             #distance
-            if (self.v_final < 10 and self.y <= 0):
+            if (self.y <= 0 and self.v_final < 0):
                 self.y = 0
+                self.v = 0
+                self.v_final = 0
             else:
                 self.y +=(self.v_final * (self.time_segment) + (.5 * self.net_accel * (self.time_segment)**2))
             time.sleep(.2)
