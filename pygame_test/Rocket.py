@@ -1,5 +1,5 @@
 
-
+import math
 
 ########################################################################################
 # Rocket
@@ -25,6 +25,12 @@ class Rocket:
         self.time_segment=0
         self.distance = 0
         self.net_accel = 0
+        self.x_accel = 0
+        self.y_accel = 0
+        self.x_vel = 0
+        self.y_vel = 0
+        self.x_vel_final = 0
+        self.y_vel_final = 0
 
     # SETTERS
     def set_x(self, x):
@@ -80,7 +86,8 @@ class Rocket:
     def calc_net_accel(self):
         mg = self.mass * self.gravity #-981
         propulsion = (self.throttle/100) * self.max_thrust
-        print(propulsion)
+        self.x_accel = math.cos(self.get_rotation())
+        self.y_accel = math.sin(self.get_rotation())
         self.net_accel = mg + propulsion
         
         print("self.accel " , str(self.net_accel) + "m/s^2")
@@ -89,12 +96,13 @@ class Rocket:
         #velocity
         self.v_final = self.v + self.net_accel *  self.time_segment
         self.v = self.v_final
+      
         # self.v_final = self.v + self.net_accel* (self.time_elapsed/1000)
         # print("self.time_elapsed(ms)", self.time_elapsed)
         # self.v = self.v_final/10000 #Shot in the dark, the /1000
         # print("v_final", str(self.v_final) + "m/s")
         
-    
+    #Needs X and Y components.
     def calc_distance(self):
         #distance
         print("0")
@@ -105,7 +113,9 @@ class Rocket:
             self.v_final = 0
         else:
             print("2")
-            self.y +=(self.v_final * (self.time_segment) + (.5 * self.net_accel * (self.time_segment)**2))
+            self.y +=(self.y_vel_final * (self.time_segment) + (.5 * self.y_accel * (self.time_segment)**2))
+
+            self.x +=(self.x_vel_final * (self.time_segment) + (.5 * self.x_accel * (self.time_segment)**2))
 
         return self.y
           #  time.sleep(.2)

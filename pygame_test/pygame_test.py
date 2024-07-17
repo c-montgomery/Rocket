@@ -160,8 +160,10 @@ class SimObject:
         pygame.display.flip()
         
     
-        
 
+        
+        
+    
 
 simObj = SimObject(500,1000)
 simObj.loop()
