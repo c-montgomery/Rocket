@@ -22,7 +22,7 @@ class SimObject:
         self.x_size = x_size    #Window size
         self.y_size = y_size    #Window size
         self.screen = pygame.display.set_mode((x_size, y_size))
-        self.FPS = 1
+        self.FPS = 60
         self.clock = pygame.time.Clock()
         self.time = self.clock.tick()
         self.elapsed = 0
@@ -32,7 +32,7 @@ class SimObject:
         self.elapsed_total = 0
         self.isRunning = True
 
-        self.rocket = Rocket(2,16, 100, 16, 0, 290.7)
+        self.rocket = Rocket(2,16, 100, 16, 0, 10)
         self.rocket_png = pygame.image.load("rocket.png")
         self.rocket_png.convert_alpha()
         self.rotated_rocket = pygame.image.load("rocket.png")
@@ -94,20 +94,20 @@ class SimObject:
                         self.rocket_png = pygame.image.load("rocket.png")
                     
                     if int(current_throttle) < self.rocket.max_thrust:
-                        self.rocket.set_throttle(current_throttle + .05)
+                        self.rocket.set_throttle(current_throttle + .5)
                 elif event.key == pygame.K_DOWN:
                     if self.rocket.get_throttle() > 0:
-                        self.rocket.set_throttle(current_throttle - .05)
+                        self.rocket.set_throttle(current_throttle - .5)
         
 
         #rotates image about center. rotates like jumping bean w/o this
     def maintain_center(self, direction ):
                 degrees = self.rocket.get_rotation()
                 if (direction ==1):
-                    degrees -= 5
+                    degrees -= 2
                     self.rocket.set_rotation(degrees)
                 elif (direction ==0):
-                    degrees += 5
+                    degrees += 2
                     self.rocket.set_rotation(degrees)
                 
                 self.shipRect = self.rocket_png.get_rect()
@@ -128,12 +128,13 @@ class SimObject:
     def print_debug(self):
       
         print()
-        # print("get v ", self.rocket.get_v())
-        # print("get v_final", self.rocket.get_v_final())
+        print("get v ", self.rocket.get_v())
+        print("get v_final", self.rocket.get_v_final())
         # print("get net_accel", str(self.rocket.net_accel))
         # print("get time segment", str(self.rocket.get_time_segment()))      
         # print("rocketx" ,str(self.rocket.get_x()))
         print("rockety", str(self.rocket.get_y()))
+        print("rocketx", str(self.rocket.get_x()))
         print("throttle", self.rocket.throttle)
         # print(self.shipRect.y)
        
@@ -146,11 +147,11 @@ class SimObject:
         if self.rocket.get_rotation() != 0:
             self.rocket.calc_net_accel()
             self.rocket.calc_v_final()
-            self.shipRect.x = 150 + ((-self.x_offset)+x)
+            self.shipRect.x = 147 + ((x-self.x_offset))
             
             self.shipRect.y = self.y_size - (self.y_offset + y)
         else:
-            self.shipRect.x = 147 + (-self.x_offset+x)
+            self.shipRect.x = 147 + (x-self.x_offset)
             self.rocket.calc_net_accel()
             self.rocket.calc_v_final()
             self.shipRect.y = self.y_size - ( self.y_offset + y)
@@ -163,13 +164,23 @@ class SimObject:
         self.screen.blit(self.rotated_rocket, self.shipRect)
         pygame.display.flip()
         
-    
+
+
+    #Create surface, populate with windowlets   
+    def update_debug_panel(self):
+        stats = [self.shipRect.x, self.shipRect.y] 
+        display.get_window_size()/4
+        for i in stats:
+           self.make_panel(i)
+
+    def make_panel(self, stat):
+        pass
 
         
         
     
 
-simObj = SimObject(500,1000)
+simObj = SimObject(500,1500)
 simObj.loop()
 
 

@@ -6,14 +6,14 @@ import math
 ########################################################################################
 
 class Rocket:
-    def __init__(self, height, width, x, y, rotation, throttle=10, mass=100, fuel=999, max_fuel=999, max_thrust=1000):
+    def __init__(self, height, width, x, y, rotation, throttle=1, mass=100, fuel=999, max_fuel=999, max_thrust=1000):
         self.x = x
         self.y = y
         self.height = height
         self.width = width
         self.center = (0,0)
         self.rotation = rotation
-        self.throttle = 98.1
+        self.throttle = 0
         self.mass = 100
         self.fuel = fuel
         self.v = 0
@@ -54,7 +54,6 @@ class Rocket:
     def set_time_elapsed(self,time):
         self.time_elapsed = time
 
-
     # GETTERS
     def get_x(self):
         return self.x
@@ -81,44 +80,36 @@ class Rocket:
     def compute_update(self):
         self.calc_net_accel()
         self.calc_v_final()
-        
-    
+         
     def calc_net_accel(self):
         mg = self.mass * self.gravity #-981
         propulsion = (self.throttle/100) * self.max_thrust
-        # print( self.get_rotation()+90)
-        # print(float(self.get_rotation()+90)*(math.pi/180))
-        # print( math.cos(((self.get_rotation()+90)*(math.pi/180))))
-        self.x_accel = self.net_accel * math.cos((self.get_rotation()+90)*(math.pi/180))
-        self.y_accel = self.net_accel * math.sin((self.get_rotation()+90)*(math.pi/180))
-        self.net_accel = mg + propulsion
-        
-        print("self.accel " , str(self.net_accel) + "m/s^2")
+        self.x_accel = propulsion * math.cos((self.get_rotation()+90)*(math.pi/180))
+        self.y_accel = (propulsion * math.sin((self.get_rotation()+90)*(math.pi/180))) 
+        self.net_accel = mg + (self.y_accel * (self.throttle/100))
+        print(self.net_accel, "<< net accel")
+        print("self.throttle", self.throttle) 
+        print("self.y_accel", self.y_accel)
     
     def calc_v_final(self):
-        self.x_vel_final = self.x_vel + self.x_accel * self.time_segment
+        self.x_vel_final = self.x_vel + (self.x_accel * self.time_segment/1000)
         self.x_vel = self.x_vel_final
-        self.y_vel_final = self.y_vel + self.y_accel * self.time_segment
+        self.y_vel_final = self.y_vel + (self.y_accel * self.time_segment/1000)
         self.y_vel = self.y_vel_final
+        print("yvel_final", self.y_vel_final)
+        print("xvel_final", self.x_vel_final)
+        print("y_accel", self.y_accel)
+        print("x_accel", self.x_accel)
 
-        print("yvel, xvel" ,self.y_vel_final, self.x_vel_final)
-        
     #Needs X and Y components.
     def calc_distance(self):
-        print("time" , self.time_segment, "y_axccel", self.y_accel, "x_accel", self.x_accel)
         #distance
         if (self.y <= self.get_height() and self.v_final < 0):
-            
             self.y = self.get_height()
             self.v = 0
             self.v_final = 0
         else:
             self.y +=(self.y_vel_final * (self.time_segment) + (.5 * self.y_accel * (self.time_segment)**2))
             self.x +=(self.x_vel_final * (self.time_segment) + (.5 * self.x_accel * (self.time_segment)**2))
-
             position = [self.x, self.y]
             return position
-          #  time.sleep(.2)
-        # self.distance = self.v*(self.time_elapsed/1000) + ( .5 * self.net_accel)* (self.time_elapsed/1000)**2
-        # print("distance", str(self.distance) + "m")
-        # return self.distance
