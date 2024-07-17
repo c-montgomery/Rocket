@@ -22,7 +22,7 @@ class SimObject:
         self.x_size = x_size    #Window size
         self.y_size = y_size    #Window size
         self.screen = pygame.display.set_mode((x_size, y_size))
-        self.FPS = 30
+        self.FPS = 1
         self.clock = pygame.time.Clock()
         self.time = self.clock.tick()
         self.elapsed = 0
@@ -32,7 +32,7 @@ class SimObject:
         self.elapsed_total = 0
         self.isRunning = True
 
-        self.rocket = Rocket(2,16, 200, 16, 0, 290.7)
+        self.rocket = Rocket(2,16, 100, 16, 0, 290.7)
         self.rocket_png = pygame.image.load("rocket.png")
         self.rocket_png.convert_alpha()
         self.rotated_rocket = pygame.image.load("rocket.png")
@@ -44,17 +44,17 @@ class SimObject:
         
     #Main loop 
     def loop(self):
-        pygame.key.set_repeat(200,100)
+        pygame.key.set_repeat(200,50)
         self.time_start = time.time()
         while (self.isRunning):
             self.check_keypresses()
             self.print_debug()
             self.update_pos()
-            elapsed = time.time() - self.elapsed_total
-            
+            elapsed = time.time() - self.last_time
             self.time_segment = elapsed
+            self.elapsed_total = time.time() - self.time_start
             self.rocket.set_time_segment(elapsed)
-            self.elapsed_total += elapsed
+            self.last_time = self.time_start + self.elapsed_total
             
 
         #react to user inputs       
@@ -94,11 +94,11 @@ class SimObject:
                         self.rocket_png = pygame.image.load("rocket.png")
                     
                     if int(current_throttle) < self.rocket.max_thrust:
-                        self.rocket.set_throttle(current_throttle + .2)
+                        self.rocket.set_throttle(current_throttle + .05)
                 elif event.key == pygame.K_DOWN:
                     if self.rocket.get_throttle() > 0:
-                        self.rocket.set_throttle(current_throttle - .2)
-        print(str("{:.0f}".format(self.rocket.throttle/10) )+ "% throttle")
+                        self.rocket.set_throttle(current_throttle - .05)
+        
 
         #rotates image about center. rotates like jumping bean w/o this
     def maintain_center(self, direction ):
@@ -126,32 +126,36 @@ class SimObject:
 
        
     def print_debug(self):
+      
         print()
-        print()
-        print("get v ", self.rocket.get_v())
-        print("get v_final", self.rocket.get_v_final())
-        print("get net_accel", str(self.rocket.net_accel))
-        print("get time segment", str(self.rocket.get_time_segment()))      
-        print("rocketx" ,str(self.rocket.get_x()))
+        # print("get v ", self.rocket.get_v())
+        # print("get v_final", self.rocket.get_v_final())
+        # print("get net_accel", str(self.rocket.net_accel))
+        # print("get time segment", str(self.rocket.get_time_segment()))      
+        # print("rocketx" ,str(self.rocket.get_x()))
         print("rockety", str(self.rocket.get_y()))
         print("throttle", self.rocket.throttle)
-        print(self.shipRect.y)
+        # print(self.shipRect.y)
        
 
         #do math to find position, rotation, etc and print to screen
     def update_pos(self):
         
-
+        x, y = self.rocket.calc_distance()[0], self.rocket.calc_distance()[1]
+   
         if self.rocket.get_rotation() != 0:
-            self.shipRect.x = 200  -(self.x_offset)
             self.rocket.calc_net_accel()
             self.rocket.calc_v_final()
-            self.shipRect.y = self.y_size - (self.rocket.calc_distance() + self.y_offset)
+            self.shipRect.x = 150 + ((-self.x_offset)+x)
+            
+            self.shipRect.y = self.y_size - (self.y_offset + y)
         else:
-            self.shipRect.x = 197
+            self.shipRect.x = 147 + (-self.x_offset+x)
             self.rocket.calc_net_accel()
             self.rocket.calc_v_final()
-            self.shipRect.y = self.y_size - (self.rocket.calc_distance() + self.y_offset)
+            self.shipRect.y = self.y_size - ( self.y_offset + y)
+            print("shipRect.x", self.shipRect.x)
+            print("shipRect.y", self.shipRect.y)
             self.rocket.set_y = self.shipRect.y
         self.rocket.set_time_elapsed(self.elapsed)
         #update screen

@@ -43,7 +43,6 @@ class projectile:
         self.setup()
         #
         output = 0
-        print("ran run")
         while(self.isRunning):
             
            
@@ -77,15 +76,7 @@ class projectile:
                 self.y +=(self.v_final * (self.time_segment) + (.5 * self.net_accel * (self.time_segment)**2))
             time.sleep(.2)
             
-
-    def vector(self):
-
-        v = pygame.math.Vector2()
-        v.xy = 3, 4
-        
-
-
-            
+         
 
     def setup(self):
         self.manip_throttle(15)
