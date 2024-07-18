@@ -13,7 +13,7 @@ class Rocket:
         self.width = width
         self.center = (0,0)
         self.rotation = rotation
-        self.throttle = 0
+        self.throttle = 98.5
         self.mass = 100
         self.fuel = fuel
         self.v = 0
@@ -85,8 +85,8 @@ class Rocket:
         mg = self.mass * self.gravity #-981
         propulsion = (self.throttle/100) * self.max_thrust
         self.x_accel = propulsion * math.cos((self.get_rotation()+90)*(math.pi/180))
-        self.y_accel = (propulsion * math.sin((self.get_rotation()+90)*(math.pi/180))) 
-        self.net_accel = mg + (self.y_accel * (self.throttle/100))
+        self.y_accel = mg + (propulsion * math.sin((self.get_rotation()+90)*(math.pi/180)))# - mg
+        self.net_accel = mg + (self.y_accel )
         print(self.net_accel, "<< net accel")
         print("self.throttle", self.throttle) 
         print("self.y_accel", self.y_accel)
@@ -99,12 +99,14 @@ class Rocket:
         print("yvel_final", self.y_vel_final)
         print("xvel_final", self.x_vel_final)
         print("y_accel", self.y_accel)
-        print("x_accel", self.x_accel)
+        print("x_accel", "{:.4f}".format(self.x_accel))
 
     #Needs X and Y components.
     def calc_distance(self):
         #distance
+        print("calc distance")
         if (self.y <= self.get_height() and self.v_final < 0):
+            print("condition met!")
             self.y = self.get_height()
             self.v = 0
             self.v_final = 0

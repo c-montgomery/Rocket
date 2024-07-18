@@ -21,7 +21,11 @@ class SimObject:
 
         self.x_size = x_size    #Window size
         self.y_size = y_size    #Window size
+
+        
         self.screen = pygame.display.set_mode((x_size, y_size))
+        #pygame.display.gl_set_attribute(GL_ACCELERATED_VISUAL, 1)
+        pygame.key.set_repeat(200,50)
         self.FPS = 60
         self.clock = pygame.time.Clock()
         self.time = self.clock.tick()
@@ -32,7 +36,7 @@ class SimObject:
         self.elapsed_total = 0
         self.isRunning = True
 
-        self.rocket = Rocket(2,16, 100, 16, 0, 10)
+        self.rocket = Rocket(16,2, 100, 16, 0, 10)
         self.rocket_png = pygame.image.load("rocket.png")
         self.rocket_png.convert_alpha()
         self.rotated_rocket = pygame.image.load("rocket.png")
@@ -44,8 +48,7 @@ class SimObject:
         
     #Main loop 
     def loop(self):
-        pygame.key.set_repeat(200,50)
-        self.time_start = time.time()
+        
         while (self.isRunning):
             self.check_keypresses()
             self.print_debug()
@@ -55,7 +58,11 @@ class SimObject:
             self.elapsed_total = time.time() - self.time_start
             self.rocket.set_time_segment(elapsed)
             self.last_time = self.time_start + self.elapsed_total
-            
+
+    def setup(self):
+        
+        pygame.display.set_caption("Rocket Simulation")
+        self.time_start = time.time() 
 
         #react to user inputs       
     def check_keypresses(self):
@@ -94,10 +101,10 @@ class SimObject:
                         self.rocket_png = pygame.image.load("rocket.png")
                     
                     if int(current_throttle) < self.rocket.max_thrust:
-                        self.rocket.set_throttle(current_throttle + .5)
+                        self.rocket.set_throttle(current_throttle + 5)
                 elif event.key == pygame.K_DOWN:
                     if self.rocket.get_throttle() > 0:
-                        self.rocket.set_throttle(current_throttle - .5)
+                        self.rocket.set_throttle(current_throttle - 5)
         
 
         #rotates image about center. rotates like jumping bean w/o this
@@ -163,13 +170,14 @@ class SimObject:
         self.screen.fill(grey)
         self.screen.blit(self.rotated_rocket, self.shipRect)
         pygame.display.flip()
+        time.sleep(.05)
         
 
 
     #Create surface, populate with windowlets   
     def update_debug_panel(self):
         stats = [self.shipRect.x, self.shipRect.y] 
-        display.get_window_size()/4
+        display.get_window_size()[0]/4
         for i in stats:
            self.make_panel(i)
 
@@ -180,7 +188,7 @@ class SimObject:
         
     
 
-simObj = SimObject(500,1500)
+simObj = SimObject(500,800)
 simObj.loop()
 
 
