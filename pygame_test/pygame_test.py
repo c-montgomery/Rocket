@@ -36,7 +36,7 @@ class SimObject:
         self.elapsed_total = 0
         self.isRunning = True
 
-        self.rocket = Rocket(16,2, 100, 16, 0, 10)
+        self.rocket = Rocket(16,2, 100, 17, 0, 10)
         self.rocket_png = pygame.image.load("rocket.png")
         self.rocket_png.convert_alpha()
         self.rotated_rocket = pygame.image.load("rocket.png")
@@ -101,10 +101,13 @@ class SimObject:
                         self.rocket_png = pygame.image.load("rocket.png")
                     
                     if int(current_throttle) < self.rocket.max_thrust:
-                        self.rocket.set_throttle(current_throttle + 5)
+                        self.rocket.set_throttle(current_throttle + 10)
                 elif event.key == pygame.K_DOWN:
-                    if self.rocket.get_throttle() > 0:
-                        self.rocket.set_throttle(current_throttle - 5)
+                    if self.rocket.get_throttle() <= 0:
+                        self.rocket.set_throttle(0)
+                    else:
+                        self.rocket.set_throttle(self.rocket.get_throttle()-10)
+                        
         
 
         #rotates image about center. rotates like jumping bean w/o this
@@ -151,26 +154,27 @@ class SimObject:
         
         x, y = self.rocket.calc_distance()[0], self.rocket.calc_distance()[1]
    
-        if self.rocket.get_rotation() != 0:
-            self.rocket.calc_net_accel()
-            self.rocket.calc_v_final()
-            self.shipRect.x = 147 + ((x-self.x_offset))
+        self.shipRect.x = 147 + (x-self.x_offset)
+        self.rocket.calc_net_accel()
+        self.rocket.calc_v_final()
+        self.shipRect.y = self.y_size - ( self.y_offset + y)
+        if self.rocket.y <=17 and self.rocket.y_vel_final <= 0:
+            self.shipRect.y = 1278
+            self.rocket.y = 17
+            self.throttle = 0
+            self.y_accel = 0
+            self.rocket.y_vel_final = 0
+            self.rocket.y_vel = 0
             
-            self.shipRect.y = self.y_size - (self.y_offset + y)
-        else:
-            self.shipRect.x = 147 + (x-self.x_offset)
-            self.rocket.calc_net_accel()
-            self.rocket.calc_v_final()
-            self.shipRect.y = self.y_size - ( self.y_offset + y)
-            print("shipRect.x", self.shipRect.x)
-            print("shipRect.y", self.shipRect.y)
-            self.rocket.set_y = self.shipRect.y
+        print("shipRect.x", self.shipRect.x)
+        print("shipRect.y", self.shipRect.y)
+        self.rocket.set_y = self.shipRect.y
         self.rocket.set_time_elapsed(self.elapsed)
         #update screen
         self.screen.fill(grey)
         self.screen.blit(self.rotated_rocket, self.shipRect)
         pygame.display.flip()
-        time.sleep(.05)
+        
         
 
 
@@ -188,7 +192,7 @@ class SimObject:
         
     
 
-simObj = SimObject(500,800)
+simObj = SimObject(500,1300)
 simObj.loop()
 
 
