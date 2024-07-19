@@ -6,7 +6,7 @@ import math
 ########################################################################################
 
 class Rocket:
-    def __init__(self, height, width, x, y, rotation, throttle=1, mass=100, fuel=999, max_fuel=999, max_thrust=1000):
+    def __init__(self, height, width, x, y, rotation, throttle=1, mass=100, fuel=999, max_fuel=999, max_thrust=1800):
         self.x = x
         self.y = y
         self.height = height
@@ -40,7 +40,10 @@ class Rocket:
     def set_rotation(self, rotate):
         self.rotation = rotate
     def set_throttle(self, throttle):
-        self.throttle = throttle
+        if self.throttle>= 0 and self.throttle <=100:
+            self.throttle = throttle
+        elif self.throttle < 0:
+            self.throttle = 0
     def set_fuel(self, fuel):
         self.fuel = fuel
     def set_height(self, height):
@@ -110,14 +113,11 @@ class Rocket:
         print("self.y" , self.y )
         print("getheight", self.get_height())
         print("v_final", self.v_final)
-        if (self.y > 800 and self.v_final < 0): #800 is default window height
-            self.y = 0
-            self.v = 0
-            self.v_final = 0
-        else:
-            self.y +=(self.y_vel_final * (self.time_segment) + (.5 * self.y_accel * (self.time_segment)**2))
-            self.x +=(self.x_vel_final * (self.time_segment) + (.5 * self.x_accel * (self.time_segment)**2))
-            print("self.y", self.y)
-            print("self.x", self.x)
-            position = [self.x, self.y]
-            return position
+        print("timesegment", self.time_segment)
+        
+        self.y +=(self.y_vel_final * (self.time_segment) + (.5 * self.y_accel * (self.time_segment)**2))
+        self.x +=(self.x_vel_final * (self.time_segment) + (.5 * self.x_accel * (self.time_segment)**2))
+        print("self.y", self.y)
+        print("self.x", self.x)
+        position = [self.x, self.y]
+        return position

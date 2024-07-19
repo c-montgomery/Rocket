@@ -84,26 +84,20 @@ class SimObject:
                 elif event.key == pygame.K_RIGHT:
                     print("RIGHT")
                     self.maintain_center(1)
-                    #pygame.display.flip()
-               
                 elif event.key == pygame.K_UP:
                     if (self.rocket.throttle > 80):
                         self.rocket_png = pygame.image.load("rocket_full_thrust.png")
                         self.rotated_rocket = pygame.image.load("rocket_full_thrust.png")
-
                     elif(self.rocket.throttle > 0):
-                    
                         self.rocket_png = pygame.image.load("rocket_half_thrust.png")
                         self.rotated_rocket = pygame.image.load("rocket_half_thrust.png")
-
                     else:
                         self.rotated_rocket = pygame.image.load("rocket.png")
                         self.rocket_png = pygame.image.load("rocket.png")
-                    
                     if int(current_throttle) < self.rocket.max_thrust:
                         self.rocket.set_throttle(current_throttle + 10)
                 elif event.key == pygame.K_DOWN:
-                    if self.rocket.get_throttle() <= 0:
+                    if self.rocket.throttle <= 10:
                         self.rocket.set_throttle(0)
                     else:
                         self.rocket.set_throttle(self.rocket.get_throttle()-10)
@@ -114,10 +108,10 @@ class SimObject:
     def maintain_center(self, direction ):
                 degrees = self.rocket.get_rotation()
                 if (direction ==1):
-                    degrees -= 2
+                    degrees -= 4
                     self.rocket.set_rotation(degrees)
                 elif (direction ==0):
-                    degrees += 2
+                    degrees += 4
                     self.rocket.set_rotation(degrees)
                 
                 self.shipRect = self.rocket_png.get_rect()
