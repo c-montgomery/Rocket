@@ -10,10 +10,12 @@ class Panel:
         self.font_init = pygame.font.init()
         self.font = pygame.font.Font()
         self.white = (255,255,255)
+        self.count = 0
 
-    def make(self, data):
-        text = data
-        panel = pygame.Surface(self.width, self.height)
+    def add_text(self):
+        text = self.data
+        
         panel = pygame.font.render(text, False, self.white)
-        panel = pygame.Surface((40,40))
+      
+        self.count +=1
         return panel

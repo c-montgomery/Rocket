@@ -6,7 +6,7 @@ import math
 ########################################################################################
 
 class Rocket:
-    def __init__(self, height, width, x, y, rotation, throttle=1, mass=100, fuel=999, max_fuel=999, max_thrust=1800):
+    def __init__(self, height, width, x, y, rotation, throttle=1, mass=100, fuel=999, max_fuel=999, max_thrust=4000):
         self.x = x
         self.y = y
         self.height = height
@@ -40,10 +40,14 @@ class Rocket:
     def set_rotation(self, rotate):
         self.rotation = rotate
     def set_throttle(self, throttle):
-        if self.throttle>= 0 and self.throttle <=100:
-            self.throttle = throttle
-        elif self.throttle < 0:
+
+        if throttle >100:
+            self.throttle = 100
+        elif throttle < 0:
             self.throttle = 0
+        else:
+            self.throttle = throttle
+            
     def set_fuel(self, fuel):
         self.fuel = fuel
     def set_height(self, height):
@@ -98,26 +102,27 @@ class Rocket:
         self.x_vel = self.x_vel_final
         self.y_vel_final = self.y_vel + (self.y_accel * self.time_segment/1000)
         self.y_vel = self.y_vel_final
-        print(self.net_accel, "<< net accel")
-        print("self.throttle", self.throttle) 
-        print("self.y_accel", self.y_accel)
-        print("yvel_final", self.y_vel_final)
-        print("xvel_final", self.x_vel_final)
-        print("y_accel", self.y_accel)
-        print("x_accel", self.x_accel)
+        # print(self.net_accel, "<< net accel")
+        # print("self.throttle", self.throttle) 
+        # print("self.y_accel", self.y_accel)
+        # print("yvel_final", self.y_vel_final)print("self.y", self.y)
+        # print("self.x", self.x)
+        # print("xvel_final", self.x_vel_final)
+        # print("y_accel", self.y_accel)
+        # print("x_accel", self.x_accel)
 
     #Needs X and Y components.
     def calc_distance(self):
         #distance
-        print(self.get_y())
-        print("self.y" , self.y )
-        print("getheight", self.get_height())
-        print("v_final", self.v_final)
-        print("timesegment", self.time_segment)
+        # print(self.get_y())
+        # print("self.y" , self.y )
+        # print("getheight", self.get_height())
+        # print("v_final", self.v_final)
+        # print("timesegment", self.time_segment)
         
         self.y +=(self.y_vel_final * (self.time_segment) + (.5 * self.y_accel * (self.time_segment)**2))
         self.x +=(self.x_vel_final * (self.time_segment) + (.5 * self.x_accel * (self.time_segment)**2))
-        print("self.y", self.y)
-        print("self.x", self.x)
+        # print("self.y", self.y)
+        # print("self.x", self.x)
         position = [self.x, self.y]
         return position

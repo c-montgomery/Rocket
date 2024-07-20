@@ -1,6 +1,7 @@
 import sys, pygame
 from pygame import *
 from Rocket import *
+import Panel
 import time
 import math
 import os
@@ -25,7 +26,7 @@ class SimObject:
         
         self.screen = pygame.display.set_mode((x_size, y_size))
         #pygame.display.gl_set_attribute(GL_ACCELERATED_VISUAL, 1)
-        pygame.key.set_repeat(200,50)
+        
         self.FPS = 60
         self.clock = pygame.time.Clock()
         self.time = self.clock.tick()
@@ -36,7 +37,7 @@ class SimObject:
         self.elapsed_total = 0
         self.isRunning = True
 
-        self.rocket = Rocket(16,2, 100, 17, 0, 10)
+        self.rocket = Rocket(16, 2, 100, 17, 0, 10)
         self.rocket_png = pygame.image.load("rocket.png")
         self.rocket_png.convert_alpha()
         self.rotated_rocket = pygame.image.load("rocket.png")
@@ -45,6 +46,8 @@ class SimObject:
         self.shipRect.y = self.y_size 
         self.y_offset = 0
         self.x_offset = 0
+
+        self.next_panel_position = 0  #x val of end of last panel created
         
     #Main loop 
     def loop(self):
@@ -60,7 +63,7 @@ class SimObject:
             self.last_time = self.time_start + self.elapsed_total
 
     def setup(self):
-        
+        pygame.key.set_repeat(200,65)
         pygame.display.set_caption("Rocket Simulation")
         self.time_start = time.time() 
 
@@ -68,42 +71,42 @@ class SimObject:
     def check_keypresses(self):
         self.maintain_center(3) #Maintain center without key presses, yuck
         for event in pygame.event.get():
+            print(pygame.KEYDOWN)
+            print(event.type)
             current_throttle = self.rocket.get_throttle()
             if event.type == pygame.QUIT: 
                 sys.exit()
             
             elif event.type == pygame.KEYDOWN:
-                
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
-  
                 elif event.key == pygame.K_LEFT:
                     print("Left")
                     self.maintain_center(0)   
-
                 elif event.key == pygame.K_RIGHT:
                     print("RIGHT")
                     self.maintain_center(1)
                 elif event.key == pygame.K_UP:
-                    if (self.rocket.throttle > 80):
-                        self.rocket_png = pygame.image.load("rocket_full_thrust.png")
-                        self.rotated_rocket = pygame.image.load("rocket_full_thrust.png")
-                    elif(self.rocket.throttle > 0):
-                        self.rocket_png = pygame.image.load("rocket_half_thrust.png")
-                        self.rotated_rocket = pygame.image.load("rocket_half_thrust.png")
-                    else:
-                        self.rotated_rocket = pygame.image.load("rocket.png")
-                        self.rocket_png = pygame.image.load("rocket.png")
-                    if int(current_throttle) < self.rocket.max_thrust:
-                        self.rocket.set_throttle(current_throttle + 10)
+                    self.animate_thrust(current_throttle, 10)
                 elif event.key == pygame.K_DOWN:
                     if self.rocket.throttle <= 10:
-                        self.rocket.set_throttle(0)
-                    else:
-                        self.rocket.set_throttle(self.rocket.get_throttle()-10)
+                        self.rocket.set_throttle(0)   
+                    self.animate_thrust(current_throttle, -10)
+                    
                         
+    def animate_thrust(self, current_throttle, throttle_change):
         
-
+        if (self.rocket.throttle > 80):
+            self.rocket_png = pygame.image.load("rocket_full_thrust.png")
+            self.rotated_rocket = pygame.image.load("rocket_full_thrust.png")
+        elif(self.rocket.throttle > 0):
+            self.rocket_png = pygame.image.load("rocket_half_thrust.png")
+            self.rotated_rocket = pygame.image.load("rocket_half_thrust.png")
+        else:
+            self.rotated_rocket = pygame.image.load("rocket.png")
+            self.rocket_png = pygame.image.load("rocket.png")
+        
+        self.rocket.set_throttle(current_throttle + throttle_change)
         #rotates image about center. rotates like jumping bean w/o this
     def maintain_center(self, direction ):
                 degrees = self.rocket.get_rotation()
@@ -167,6 +170,7 @@ class SimObject:
         #update screen
         self.screen.fill(grey)
         self.screen.blit(self.rotated_rocket, self.shipRect)
+        self.screen.blit(self.update_debug_panel(), (self.next_panel_position,0))
         pygame.display.flip()
         
         
@@ -175,18 +179,21 @@ class SimObject:
     #Create surface, populate with windowlets   
     def update_debug_panel(self):
         stats = [self.shipRect.x, self.shipRect.y] 
+        pygame.font.init()
+        fonto = pygame.font.Font("cmb10.ttf", 26) 
         display.get_window_size()[0]/4
-        for i in stats:
-           self.make_panel(i)
+        
+        text = "velocity " + str(round(math.sqrt(self.rocket.x_vel**2 + self.rocket.y_vel**2),2)) + "m/s"    
+        return fonto.render(text, False, white, None)
 
-    def make_panel(self, stat):
-        pass
+   
 
         
         
     
 
-simObj = SimObject(500,1300)
+simObj = SimObject(1000,1100)
+simObj.setup()
 simObj.loop()
 
 
