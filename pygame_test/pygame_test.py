@@ -1,7 +1,7 @@
 import sys, pygame
 from pygame import *
 from Rocket import *
-import Panel
+from Panel import Panel
 import time
 import math
 import os
@@ -54,7 +54,7 @@ class SimObject:
         
         while (self.isRunning):
             self.check_keypresses()
-            self.print_debug()
+            #self.print_debug()
             self.update_pos()
             elapsed = time.time() - self.last_time
             self.time_segment = elapsed
@@ -132,17 +132,17 @@ class SimObject:
         #fill screen, update image and rectangle placement. Display changes
 
        
-    def print_debug(self):
+    # def print_debug(self):
       
-        print()
-        print("get v ", self.rocket.get_v())
-        print("get v_final", self.rocket.get_v_final())
-        # print("get net_accel", str(self.rocket.net_accel))
-        # print("get time segment", str(self.rocket.get_time_segment()))      
-        # print("rocketx" ,str(self.rocket.get_x()))
-        print("rockety", str(self.rocket.get_y()))
-        print("rocketx", str(self.rocket.get_x()))
-        print("throttle", self.rocket.throttle)
+        # print()
+        # print("get v ", self.rocket.get_v())
+        # print("get v_final", self.rocket.get_v_final())
+        # # print("get net_accel", str(self.rocket.net_accel))
+        # # print("get time segment", str(self.rocket.get_time_segment()))      
+        # # print("rocketx" ,str(self.rocket.get_x()))
+        # print("rockety", str(self.rocket.get_y()))
+        # print("rocketx", str(self.rocket.get_x()))
+        # print("throttle", self.rocket.throttle)
         # print(self.shipRect.y)
        
 
@@ -172,25 +172,26 @@ class SimObject:
         self.screen.blit(self.rotated_rocket, self.shipRect)
         self.screen.blit(self.update_debug_panel(), (self.next_panel_position,0))
         pygame.display.flip()
-        
-        
-
 
     #Create surface, populate with windowlets   
     def update_debug_panel(self):
-        stats = [self.shipRect.x, self.shipRect.y] 
-        pygame.font.init()
-        fonto = pygame.font.Font("cmb10.ttf", 26) 
-        display.get_window_size()[0]/4
+        stats = {"shipRect.x": self.shipRect.x, 
+                 "shipRect.y" : self.shipRect.y}
+        count = 1
+        for i, j in stats.items():
+            
+            print("stats[i]")
+            print(stats[i])
+            print(j)
+            panel = Panel(20, count* 20,i,j)
+            count +=1
+            return panel.add_text()
+        # fonto = pygame.font.Font("cmb10.ttf", 16) 
+        # display.get_window_size()[0]/4
         
-        text = "velocity " + str(round(math.sqrt(self.rocket.x_vel**2 + self.rocket.y_vel**2),2)) + "m/s"    
-        return fonto.render(text, False, white, None)
-
-   
-
-        
-        
-    
+        # text = "velocity " + str(round(math.sqrt(self.rocket.x_vel**2 + self.rocket.y_vel**2),2)) + "m/s"    
+        # return fonto.render(text, False, white, None)
+  
 
 simObj = SimObject(1000,1100)
 simObj.setup()
