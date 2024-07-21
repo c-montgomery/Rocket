@@ -22,11 +22,7 @@ class SimObject:
 
         self.x_size = x_size    #Window size
         self.y_size = y_size    #Window size
-
-        
         self.screen = pygame.display.set_mode((x_size, y_size))
-        #pygame.display.gl_set_attribute(GL_ACCELERATED_VISUAL, 1)
-        
         self.FPS = 60
         self.clock = pygame.time.Clock()
         self.time = self.clock.tick()
@@ -46,8 +42,11 @@ class SimObject:
         self.shipRect.y = self.y_size 
         self.y_offset = 0
         self.x_offset = 0
+        self.orientation = 0
 
-        self.next_panel_position = 0  #x val of end of last panel created
+        self.panel = None
+        self.panel_surface = None
+        self.panel_count = 2
         
     #Main loop 
     def loop(self):
@@ -71,20 +70,15 @@ class SimObject:
     def check_keypresses(self):
         self.maintain_center(3) #Maintain center without key presses, yuck
         for event in pygame.event.get():
-            print(pygame.KEYDOWN)
-            print(event.type)
             current_throttle = self.rocket.get_throttle()
             if event.type == pygame.QUIT: 
                 sys.exit()
-            
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
                 elif event.key == pygame.K_LEFT:
-                    print("Left")
                     self.maintain_center(0)   
                 elif event.key == pygame.K_RIGHT:
-                    print("RIGHT")
                     self.maintain_center(1)
                 elif event.key == pygame.K_UP:
                     self.animate_thrust(current_throttle, 10)
@@ -93,9 +87,8 @@ class SimObject:
                         self.rocket.set_throttle(0)   
                     self.animate_thrust(current_throttle, -10)
                     
-                        
+      
     def animate_thrust(self, current_throttle, throttle_change):
-        
         if (self.rocket.throttle > 80):
             self.rocket_png = pygame.image.load("rocket_full_thrust.png")
             self.rotated_rocket = pygame.image.load("rocket_full_thrust.png")
@@ -105,52 +98,31 @@ class SimObject:
         else:
             self.rotated_rocket = pygame.image.load("rocket.png")
             self.rocket_png = pygame.image.load("rocket.png")
-        
         self.rocket.set_throttle(current_throttle + throttle_change)
         #rotates image about center. rotates like jumping bean w/o this
     def maintain_center(self, direction ):
-                degrees = self.rocket.get_rotation()
-                if (direction ==1):
-                    degrees -= 4
-                    self.rocket.set_rotation(degrees)
-                elif (direction ==0):
-                    degrees += 4
-                    self.rocket.set_rotation(degrees)
-                
-                self.shipRect = self.rocket_png.get_rect()
-                self.screen.fill(grey)
-                x,y = self.shipRect.center
-                self.rotated_rocket = pygame.transform.rotate(self.rocket_png, degrees) 
-                
-                self.x_offset, self.y_offset = self.rotated_rocket.get_rect().center
-                self.shipRect.center = (x ,y )
+        self.orientation = self.rocket.get_rotation()
+        if (direction ==1):
+            self.orientation -= 4
+            self.rocket.set_rotation(self.orientation)
+        elif (direction ==0):
+            self.orientation += 4
+            self.rocket.set_rotation(self.orientation)
+        self.shipRect = self.rocket_png.get_rect()
+        self.screen.fill(grey)
+        x,y = self.shipRect.center
+        self.rotated_rocket = pygame.transform.rotate(self.rocket_png, self.orientation) 
+        self.x_offset, self.y_offset = self.rotated_rocket.get_rect().center
+        self.shipRect.center = (x ,y )
                     
         #Draw bounding rectangle
     def draw_rectangle(self, object):
         pygame.draw.rect(object, (255,255,255), object.get_bounding_rect(), width = 1)
 
-        #fill screen, update image and rectangle placement. Display changes
-
-       
-    # def print_debug(self):
-      
-        # print()
-        # print("get v ", self.rocket.get_v())
-        # print("get v_final", self.rocket.get_v_final())
-        # # print("get net_accel", str(self.rocket.net_accel))
-        # # print("get time segment", str(self.rocket.get_time_segment()))      
-        # # print("rocketx" ,str(self.rocket.get_x()))
-        # print("rockety", str(self.rocket.get_y()))
-        # print("rocketx", str(self.rocket.get_x()))
-        # print("throttle", self.rocket.throttle)
-        # print(self.shipRect.y)
-       
-
         #do math to find position, rotation, etc and print to screen
     def update_pos(self):
         
         x, y = self.rocket.calc_distance()[0], self.rocket.calc_distance()[1]
-   
         self.shipRect.x = 147 + (x-self.x_offset)
         self.rocket.calc_net_accel()
         self.rocket.calc_v_final()
@@ -162,36 +134,26 @@ class SimObject:
             self.y_accel = 0
             self.rocket.y_vel_final = 0
             self.rocket.y_vel = 0
-            
-        print("shipRect.x", self.shipRect.x)
-        print("shipRect.y", self.shipRect.y)
+              
         self.rocket.set_y = self.shipRect.y
         self.rocket.set_time_elapsed(self.elapsed)
         #update screen
         self.screen.fill(grey)
         self.screen.blit(self.rotated_rocket, self.shipRect)
-        self.screen.blit(self.update_debug_panel(), (self.next_panel_position,0))
+        stats = {"shipRect.x"   : self.shipRect.x, 
+                 "shipRect.y"   : self.shipRect.y,
+                 "Throttle"     : self.rocket.throttle, 
+                 "Rotation"     : self.orientation,
+                 "Vel Magnitude": round(self.rocket.velocity_vector, 2)
+                 }
+       
+        for i in stats.keys():
+            self.panel = Panel(i,stats[i])
+            self.panel_count +=1
+            self.panel_surface = self.panel.add_text()
+            self.screen.blit(self.panel_surface, (5,self.panel_count *18))
         pygame.display.flip()
-
-    #Create surface, populate with windowlets   
-    def update_debug_panel(self):
-        stats = {"shipRect.x": self.shipRect.x, 
-                 "shipRect.y" : self.shipRect.y}
-        count = 1
-        for i, j in stats.items():
-            
-            print("stats[i]")
-            print(stats[i])
-            print(j)
-            panel = Panel(20, count* 20,i,j)
-            count +=1
-            return panel.add_text()
-        # fonto = pygame.font.Font("cmb10.ttf", 16) 
-        # display.get_window_size()[0]/4
-        
-        # text = "velocity " + str(round(math.sqrt(self.rocket.x_vel**2 + self.rocket.y_vel**2),2)) + "m/s"    
-        # return fonto.render(text, False, white, None)
-  
+        self.panel_count = 1
 
 simObj = SimObject(1000,1100)
 simObj.setup()
