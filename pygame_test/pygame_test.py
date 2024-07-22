@@ -32,8 +32,9 @@ class SimObject:
         self.time_start = 0
         self.elapsed_total = 0
         self.isRunning = True
+        self.throttle_changed = False
 
-        self.rocket = Rocket(16, 2, 100, 17, 0, 10)
+        self.rocket = Rocket(15, 2, 100, 15, 0, 10)
         self.rocket_png = pygame.image.load("rocket.png")
         self.rocket_png.convert_alpha()
         self.rotated_rocket = pygame.image.load("rocket.png")
@@ -53,13 +54,13 @@ class SimObject:
         
         while (self.isRunning):
             self.check_keypresses()
-            #self.print_debug()
             self.update_pos()
             elapsed = time.time() - self.last_time
             self.time_segment = elapsed
             self.elapsed_total = time.time() - self.time_start
             self.rocket.set_time_segment(elapsed)
             self.last_time = self.time_start + self.elapsed_total
+            
 
     def setup(self):
         pygame.key.set_repeat(200,65)
@@ -68,9 +69,10 @@ class SimObject:
 
         #react to user inputs       
     def check_keypresses(self):
+        current_throttle = self.rocket.get_throttle()
         self.maintain_center(3) #Maintain center without key presses, yuck
         for event in pygame.event.get():
-            current_throttle = self.rocket.get_throttle()
+            
             if event.type == pygame.QUIT: 
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
@@ -86,20 +88,23 @@ class SimObject:
                     if self.rocket.throttle <= 10:
                         self.rocket.set_throttle(0)   
                     self.animate_thrust(current_throttle, -10)
-                    
+            else:
+                self.animate_thrust(0,0)        
       
     def animate_thrust(self, current_throttle, throttle_change):
-        if (self.rocket.throttle > 80):
-            self.rocket_png = pygame.image.load("rocket_full_thrust.png")
-            self.rotated_rocket = pygame.image.load("rocket_full_thrust.png")
-        elif(self.rocket.throttle > 0):
-            self.rocket_png = pygame.image.load("rocket_half_thrust.png")
-            self.rotated_rocket = pygame.image.load("rocket_half_thrust.png")
-        else:
-            self.rotated_rocket = pygame.image.load("rocket.png")
-            self.rocket_png = pygame.image.load("rocket.png")
-        self.rocket.set_throttle(current_throttle + throttle_change)
-        #rotates image about center. rotates like jumping bean w/o this
+        if (throttle_change):
+            self.rocket.set_throttle(current_throttle + throttle_change)
+            if (self.rocket.throttle > 80):
+                self.rocket_png = pygame.image.load("rocket_full_thrust.png")
+            elif(self.rocket.throttle > 0):
+                self.rocket_png = pygame.image.load("rocket_half_thrust.png")
+            else:
+                self.rotated_rocket = pygame.image.load("rocket.png")
+                self.rocket_png = pygame.image.load("rocket.png")
+
+            
+
+     #rotates image about center. rotates like jumping bean w/o this
     def maintain_center(self, direction ):
         self.orientation = self.rocket.get_rotation()
         if (direction ==1):
@@ -128,8 +133,8 @@ class SimObject:
         self.rocket.calc_v_final()
         self.shipRect.y = self.y_size - ( self.y_offset + y)
         if self.rocket.y <=17 and self.rocket.y_vel_final <= 0:
-            self.shipRect.y = 1278
-            self.rocket.y = 17
+            self.shipRect.y = self.y_size -17
+            self.rocket.y = 10
             self.throttle = 0
             self.y_accel = 0
             self.rocket.y_vel_final = 0
@@ -144,8 +149,7 @@ class SimObject:
                  "shipRect.y"   : self.shipRect.y,
                  "Throttle"     : self.rocket.throttle, 
                  "Rotation"     : self.orientation,
-                 "Vel Magnitude": round(self.rocket.velocity_vector, 2)
-                 }
+                 "Vel Magnitude": round(self.rocket.velocity_vector/10, 2)}
        
         for i in stats.keys():
             self.panel = Panel(i,stats[i])

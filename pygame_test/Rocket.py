@@ -6,7 +6,7 @@ import math
 ########################################################################################
 
 class Rocket:
-    def __init__(self, height, width, x, y, rotation, throttle=1, mass=100, fuel=999, max_fuel=999, max_thrust=4000):
+    def __init__(self, height, width, x, y, rotation, throttle=1, mass=100, fuel=999, max_fuel=999, max_thrust=8000):
         self.x = x
         self.y = y
         self.height = height
