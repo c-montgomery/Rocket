@@ -31,6 +31,8 @@ class Rocket:
         self.y_vel = 0
         self.x_vel_final = 0
         self.y_vel_final = 0
+        self.vector_direction = 0
+        self.velocity_vector = 0
 
     # SETTERS
     def set_x(self, x):
@@ -38,7 +40,7 @@ class Rocket:
     def set_y(self, y):
         self.y = y
     def set_rotation(self, rotate):
-        self.rotation = rotate
+        self.rotation = rotate % 360
     def set_throttle(self, throttle):
         if throttle >100:
             self.throttle = 100
@@ -82,6 +84,29 @@ class Rocket:
         return self.v_final
     def get_time_segment(self):
         return self.time_segment
+    def get_vector_direction(self):
+        if self.y_vel != 0 and self.x_vel !=0:
+            self.vector_direction = math.atan2(self.y_vel,self.x_vel) 
+           
+            
+        elif self.x_vel == 0:
+            print("oh, x is 0")
+           
+        else:
+            self.vector_direction = math.atan2(self.y_vel,self.x_vel) 
+            self.vector_direction = 0
+        
+        return self.vector_direction
+    
+    # def find_quadrant(self):
+    #     if (self.rotation % 360 >180 and self.rotation % 360 < 270):
+    #        self.vector_direction +=180
+    #     elif(self.rotation % 360 >90 and self.rotation % 360 < 180 ):
+    #         self.vector_direction = self.get_vector_direction() +90
+    #     else:
+    #         self.vector_direction = (self.get_vector_direction()) + 270
+             
+    
     def compute_update(self):
         self.calc_net_accel()
         self.calc_v_final()
@@ -89,8 +114,8 @@ class Rocket:
     def calc_net_accel(self):
         mg = self.mass * self.gravity #-981
         propulsion = (self.throttle/100) * self.max_thrust
-        self.x_accel = propulsion * math.cos((self.get_rotation()+90)*(math.pi/180))
-        self.y_accel = mg + (propulsion * math.sin((self.get_rotation()+90)*(math.pi/180))) 
+        self.x_accel = propulsion * math.cos((self.get_rotation())*(math.pi/180))
+        self.y_accel = mg + (propulsion * math.sin((self.get_rotation())*(math.pi/180))) 
         self.net_accel = (mg + (self.y_accel * (self.throttle/100)))/10
         
     def calc_v_final(self):
@@ -98,10 +123,13 @@ class Rocket:
         self.x_vel = self.x_vel_final
         self.y_vel_final = self.y_vel + (self.y_accel * self.time_segment/1000)
         self.y_vel = self.y_vel_final
-        self.velocity_vector = self.y_vel**2 + self.x_vel**2
+        self.velocity_vector = math.sqrt(self.y_vel**2 + self.x_vel**2)
 
     def calc_distance(self):
         self.y +=(self.y_vel_final * (self.time_segment) + (.5 * self.y_accel * (self.time_segment)**2))
         self.x +=(self.x_vel_final * (self.time_segment) + (.5 * self.x_accel * (self.time_segment)**2))
         position = [self.x, self.y]
+
         return position
+        #compensate for -x's and/or -y's
+    
