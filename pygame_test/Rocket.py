@@ -85,16 +85,9 @@ class Rocket:
     def get_time_segment(self):
         return self.time_segment
     def get_vector_direction(self):
-        if self.y_vel != 0 and self.x_vel !=0:
-            self.vector_direction = math.atan2(self.y_vel,self.x_vel) 
+        self.vector_direction = math.atan2(self.y_vel,self.x_vel) 
            
             
-        elif self.x_vel == 0:
-            print("oh, x is 0")
-           
-        else:
-            self.vector_direction = math.atan2(self.y_vel,self.x_vel) 
-            self.vector_direction = 0
         
         return self.vector_direction
     

@@ -23,7 +23,7 @@ class SimObject:
         self.x_size = x_size    #Window size
         self.y_size = y_size    #Window size
         self.screen = pygame.display.set_mode((x_size, y_size))
-        self.FPS = 60
+        self.FPS = 30
         self.clock = pygame.time.Clock()
         self.time = self.clock.tick()
         self.elapsed = 0
@@ -110,10 +110,10 @@ class SimObject:
     def maintain_center(self, direction ):
         self.orientation = self.rocket.get_rotation()
         if (direction ==1):
-            self.orientation -= 5
+            self.orientation -= .7
             self.rocket.set_rotation(self.orientation)
         elif (direction ==0):
-            self.orientation += 5
+            self.orientation += .7
             self.rocket.set_rotation(self.orientation)
         self.shipRect = self.rocket_png.get_rect()
         
@@ -131,17 +131,17 @@ class SimObject:
             x+=self.x_offset
             
             pygame.draw.line(self.screen, white,(x, y),
-            (x + (self.rocket.velocity_vector*math.cos(self.rocket.get_vector_direction())),
-            (y - (self.rocket.velocity_vector* math.sin(self.rocket.get_vector_direction())))))
+            (x + 2*(self.rocket.velocity_vector*math.cos(self.rocket.get_vector_direction())),
+            (y - 2*(self.rocket.velocity_vector* math.sin(self.rocket.get_vector_direction())))))
 
         #do math to find position, rotation, etc and print to screen
     def update_pos(self):
         
         x, y = self.rocket.calc_distance()[0], self.rocket.calc_distance()[1]
-        self.shipRect.x = 147 + (x-self.x_offset)
+        self.shipRect.x = ((147 + (x-self.x_offset)) % self.x_size) % self.x_size
         self.rocket.calc_net_accel()
         self.rocket.calc_v_final()
-        self.shipRect.y = self.y_size - ( self.y_offset + y)
+        self.shipRect.y = (self.y_size - ( self.y_offset + y)) % self.y_size
         if self.rocket.y <=15 and self.rocket.y_vel_final <= 0:
             self.shipRect.y = self.y_size -15
             self.rocket.y = 10
@@ -164,6 +164,7 @@ class SimObject:
                  "y veloc"      : round(self.rocket.y_vel),
                  "Vel Magnitude": round(self.rocket.velocity_vector, 2),
                  "vector dir"   : round(self.rocket.get_vector_direction(),2),
+                 "frame time"   : self.time_segment
                  }
        
         for i in stats.keys():
@@ -171,12 +172,12 @@ class SimObject:
             self.panel_count +=1
             self.panel_surface = self.panel.add_text()
             self.screen.blit(self.panel_surface, (5,self.panel_count *18))
-            self.draw_vector(self.shipRect.center[0],self.shipRect.center[1]) 
+            #self.draw_vector(self.shipRect.center[0],self.shipRect.center[1]) 
                  
         pygame.display.flip()
         self.panel_count = 1
 
-simObj = SimObject(1000,1100)
+simObj = SimObject(2000,1350)
 simObj.setup()
 simObj.loop()
 
