@@ -24,8 +24,6 @@ class SimObject:
         self.y_size = y_size    #Window size
         self.screen = pygame.display.set_mode((x_size, y_size))
         self.FPS = 30
-        #self.clock = pygame.time.Clock()
-        #self.time = self.clock.tick()
         self.elapsed = 0
         self.last_time = time.time()
         self.time_delta = 0
@@ -150,7 +148,6 @@ class SimObject:
             self.rocket.y_vel = 0
               
         self.rocket.set_y = self.shipRect.y
-        self.rocket.set_time_elapsed(self.elapsed)
         #update screen
         self.screen.fill(grey)
        
