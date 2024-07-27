@@ -28,8 +28,8 @@ class SimObject:
         self.time = self.clock.tick()
         self.elapsed = 0
         self.last_time = time.time()
-        self.time_segment = 0
-        self.time_start = 0
+        self.time_delta = 0
+        self.time_start = time.time()
         self.elapsed_total = 0
         self.isRunning = True
         self.throttle_changed = False
@@ -48,26 +48,25 @@ class SimObject:
 
         self.panel = None
         self.panel_surface = None
-        self.panel_count = 2
+        self.panel_count = 1
         
     #Main loop 
     def loop(self):
         
         while (self.isRunning):
-           
+            
             self.check_keypresses()
             self.update_pos()
-            elapsed = time.time() - self.last_time
-            self.time_segment = elapsed
-            self.elapsed_total = time.time() - self.time_start
-            self.rocket.set_time_segment(elapsed)
-            self.last_time = self.time_start + self.elapsed_total
+            self.elapsed = time.time() - self.last_time
+            self.time_delta = self.elapsed
+            self.rocket.set_time_delta(self.elapsed)
+            self.last_time = time.time()
             
 
     def setup(self):
         pygame.key.set_repeat(200, 30)
         pygame.display.set_caption("Rocket Simulation")
-        self.time_start = time.time() 
+        self.last_time = time.time() 
 
         #react to user inputs       
     def check_keypresses(self):
@@ -110,10 +109,10 @@ class SimObject:
     def maintain_center(self, direction ):
         self.orientation = self.rocket.get_rotation()
         if (direction ==1):
-            self.orientation -= .7
+            self.orientation -= 1
             self.rocket.set_rotation(self.orientation)
         elif (direction ==0):
-            self.orientation += .7
+            self.orientation += 1
             self.rocket.set_rotation(self.orientation)
         self.shipRect = self.rocket_png.get_rect()
         
@@ -164,7 +163,7 @@ class SimObject:
                  "y veloc"      : round(self.rocket.y_vel),
                  "Vel Magnitude": round(self.rocket.velocity_vector, 2),
                  "vector dir"   : round(self.rocket.get_vector_direction(),2),
-                 "frame time"   : self.time_segment
+                 "frame time"   : self.time_delta
                  }
        
         for i in stats.keys():
@@ -177,7 +176,7 @@ class SimObject:
         pygame.display.flip()
         self.panel_count = 1
 
-simObj = SimObject(2000,1350)
+simObj = SimObject(1600,1400)
 simObj.setup()
 simObj.loop()
 

@@ -22,7 +22,7 @@ class Rocket:
         self.max_thrust = max_thrust
         self.gravity = -9.81
         self.time_elapsed = 0
-        self.time_segment=0
+        self.time_delta=0
         self.distance = 0
         self.net_accel = 0
         self.x_accel = 0
@@ -56,8 +56,8 @@ class Rocket:
         self.width = width
     def set_center(self, center):
         self.center = center
-    def set_time_segment(self,time):
-        self.time_segment = time
+    def set_time_delta(self,time):
+        self.time_delta = time
     def set_time_elapsed(self,time):
         self.time_elapsed = time
 
@@ -82,8 +82,8 @@ class Rocket:
         return self.v
     def get_v_final(self):
         return self.v_final
-    def get_time_segment(self):
-        return self.time_segment
+    def get_time_delta(self):
+        return self.time_delta
     def get_vector_direction(self):
         self.vector_direction = math.atan2(self.y_vel,self.x_vel) 
            
@@ -112,15 +112,15 @@ class Rocket:
         self.net_accel = (mg + (self.y_accel * (self.throttle/100)))/10
         
     def calc_v_final(self):
-        self.x_vel_final = self.x_vel + (self.x_accel * self.time_segment/1000)
+        self.x_vel_final = self.x_vel + (self.x_accel * self.time_delta/1000)
         self.x_vel = self.x_vel_final
-        self.y_vel_final = self.y_vel + (self.y_accel * self.time_segment/1000)
+        self.y_vel_final = self.y_vel + (self.y_accel * self.time_delta/1000)
         self.y_vel = self.y_vel_final
         self.velocity_vector = math.sqrt(self.y_vel**2 + self.x_vel**2)
 
     def calc_distance(self):
-        self.y +=(self.y_vel_final * (self.time_segment) + (.5 * self.y_accel * (self.time_segment)**2))
-        self.x +=(self.x_vel_final * (self.time_segment) + (.5 * self.x_accel * (self.time_segment)**2))
+        self.y +=(self.y_vel_final * (self.time_delta) + (.5 * self.y_accel * (self.time_delta)**2))
+        self.x +=(self.x_vel_final * (self.time_delta) + (.5 * self.x_accel * (self.time_delta)**2))
         position = [self.x, self.y]
 
         return position
