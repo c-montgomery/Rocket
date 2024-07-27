@@ -21,7 +21,6 @@ class Rocket:
         self.max_fuel = max_fuel
         self.max_thrust = max_thrust
         self.gravity = -9.81
-        self.time_elapsed = 0
         self.time_delta=0
         self.distance = 0
         self.net_accel = 0
@@ -58,8 +57,7 @@ class Rocket:
         self.center = center
     def set_time_delta(self,time):
         self.time_delta = time
-    def set_time_elapsed(self,time):
-        self.time_elapsed = time
+    
 
     # GETTERS
     def get_x(self):

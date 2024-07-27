@@ -24,13 +24,13 @@ class SimObject:
         self.y_size = y_size    #Window size
         self.screen = pygame.display.set_mode((x_size, y_size))
         self.FPS = 30
-        self.clock = pygame.time.Clock()
-        self.time = self.clock.tick()
+        #self.clock = pygame.time.Clock()
+        #self.time = self.clock.tick()
         self.elapsed = 0
         self.last_time = time.time()
         self.time_delta = 0
         self.time_start = time.time()
-        self.elapsed_total = 0
+       
         self.isRunning = True
         self.throttle_changed = False
 
