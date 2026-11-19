@@ -1,8 +1,13 @@
-import time
-from Grid import Grid
+import os
 import sys
-from Rocket import Rocket
+import time
 import threading
+
+# Add vendor directory to module search path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "vendor"))
+
+from Grid import Grid
+from Rocket import Rocket
 from Display_panel import Display_panel
 from pynput import keyboard
 
